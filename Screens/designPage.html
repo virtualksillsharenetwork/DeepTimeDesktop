@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <link rel = "stylesheet" href = "../node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../bootstrapAdminLTE/plugins/fontawesome-free/css/all.min.css">
+    <link href="../css/mystyle.css" rel="stylesheet">
+    <script>window.$ = window.jQuery = require('../node_modules/jquery/dist/jquery.min.js');</script>
+    <script src="../css/aes.js"></script>
+    <script src="../ScreensBackend/designPage.js"></script>
+    <title>Deep Time</title>
+  </head>
+  <body>
+      <div class="container-fluid mt-2">
+        <div class="row">
+            <div class="col-2">
+            <button id="backtoselection" id="backtoselection" type="button" class="btn iconBtn fas fa-chevron-left" onclick="backtoselection()"></button>
+            </div>
+            <div class="col-10">
+                <div class="row">
+               <p id="blable" name="blable" class="TopWork">Boundry Lableing</p>
+                </div>
+                <div class="row">
+                    <p id="username" name="username" class="TopNameLoc"></p>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <hr style="height: 2px; color: rgba(78, 78, 78, 0.651);">
+        </div>
+        <div id="gobacke" class="alert alert-danger" role="alert">
+        </div>
+        <div class="row">
+            <div class="col-9">
+                <div class="row ml-3">
+               <div>
+                    <label id="hourss" name="hourss" class="timer">0</label> 
+                   <label class="timer">hrs</label> 
+                   <label id="mins" name="mins" class="timer">00</label>
+                   <label  class="timer">m</label>
+                   <!-- <label id="secnds" name="secnds">00</label>
+                   <label >s</label> -->
+               </div>
+                </div>
+                <div class="row">
+                    <p class="timerBottom">Current Session</p>
+                </div>
+            </div>
+            <div class="col-3">
+                
+                <label class="switch mt-2">
+                    <input type="checkbox" id="togBtn" onclick="online()">
+                    <div class="slider round">
+                     <!--ADDED HTML -->
+                     <span class="on">ON</span>
+                     <span class="off">OFF</span>
+                     <!--END-->
+                    </div>
+                   </label>
+                   
+            </div>
+
+        </div>
+
+        <div class="row d-flex justify-content-between">
+           
+            <div class="col-5">
+                <div class="row ml-3">
+                    <div>
+                        <label id="today_hrs" class="hrs" >0</label>
+                        <label class="hrs">:</label>
+                        <label id="today_minuts" class="hrs" >0</label>
+                        <label class="hrs">hrs</label>
+                    </div>
+               
+                </div>
+                <div class="row">
+                    <div>
+                        <label class="timeUTC">Today (</label>
+                        <label id="dayofwork" name="dayofwork" class="timeUTC">Mon</label>
+                        <label class="timeUTC">)</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-5">
+                <div class="row ml-3">
+                    <div class="text-center">
+                        <label id="hours_per_week" class="hrs text-center">0</label>
+                        <label class="hrs text-center">:</label>
+                        <label id="minutes_per_week"class="hrs text-center">0</label>
+                    </div>
+                </div>
+                <div class="row text-center">
+                    <p class="timeUTC2">This Week</p>
+                </div>
+            </div>
+           
+
+        </div>
+
+        <div class="row d-flex justify-content-between">
+                <div class="row ml-3">
+                    <label class="hrs">Memo</label>
+                </div>
+                <div class="row">
+                    <div class="col text-center mt-2">
+                    <input id="memo" name="memo" type="text" class="form-control" placeholder="What are you working on?"/>
+                    </div>
+                </div>
+        </div>
+
+
+
+        <div class="row d-flex justify-content-between mt-3">
+           
+            <div class="col-9">
+                <div class="row ml-3">
+                    <label class="shlsc">Latest Screen Capture</label>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="row ml-5">
+                    <!-- <label id="day_of_last_screen_capture" name="day_of_last_screen_capture" class="shlsc ">3 <label class="shlsc "> days ago</label></label> -->
+                    
+                </div>
+            </div>
+           
+
+        </div>
+
+        <div class="row d-flex justify-content-between mt-3">
+           
+            <div class="col text-center">
+                <div class="row ml-3">
+                    <img id="lastSS" name="lastSS" alt="Current Screen Shoot">
+                </div>
+            </div>
+
+        </div>
+
+
+
+      </div>
+   
+
+
+ <script src ="../node_modules/jquery/dist/jquery.min.js"></script>
+<script>
+
+$("#gobacke").hide();
+</script>
+    
+  </body>
+</html>

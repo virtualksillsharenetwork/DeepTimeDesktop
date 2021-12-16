@@ -1,0 +1,66 @@
+{
+  "name": "Deep Time",
+  "version": "1.0.0",
+  "description": "Deep Time",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "author": "Itsan Soft",
+  "license": "MIT",
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.61",
+    "@electron-forge/maker-deb": "^6.0.0-beta.61",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.61",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.61",
+    "@electron-forge/maker-zip": "^6.0.0-beta.61",
+    "electron": "^16.0.1"
+  },
+  "dependencies": {
+    "@electron/remote": "^2.0.1",
+    "bootstrap": "^5.1.3",
+    "crypto-js": "^4.1.1",
+    "cryptr": "^6.0.2",
+    "csv-parser": "^3.0.0",
+    "csv-reader": "^1.0.8",
+    "csv-writer": "^1.6.0",
+    "electron-localshortcut": "^3.2.1",
+    "electron-screenshot-service": "^4.0.3",
+    "electron-squirrel-startup": "^1.0.0",
+    "form-data": "^4.0.0",
+    "ihook": "^1.0.3",
+    "iohook": "^0.9.3",
+    "jquery": "^3.6.0",
+    "mysql": "^2.18.1",
+    "node-hook": "^1.0.0"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "my_electron_app"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
+  }
+}

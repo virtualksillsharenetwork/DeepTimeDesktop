@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <link rel = "stylesheet" href = "../node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../bootstrapAdminLTE/plugins/fontawesome-free/css/all.min.css">
+    <link href="../css/mystyle.css" rel="stylesheet">
+    <title>Deep Time</title>
+    <script src="../css/aes.js"></script>
+    <script>window.$ = window.jQuery = require('../node_modules/jquery/dist/jquery.min.js');</script>
+   </head>
+  <body>
+   <div class="container-fluid mt-2 ">
+
+      <div id="response" class="alert alert-danger" role="alert">
+      </div>
+
+    <!-- <form id="loginform" name="loginform"> -->
+      <div class="row">
+            
+         <div class="row d-flex justify-content-center text-center">
+            <div class="row ml-3">
+                <label class="hrs">Username</label>
+            </div>
+            <div class="row">
+                <div class="col text-center mt-2">
+                <input id="email" name="email" class="form-control form-control-sm col-md-2" required>
+                </div>
+            </div>
+         </div>
+
+         <div class="row d-flex justify-content-center text-center">
+            <div class="row ml-3">
+                <label class="hrs">Password</label>
+            </div>
+            <div class="row">
+                <div class="col text-center mt-2">
+                    <input id="password" name="password" type="password" class="form-control form-control-sm col-md-2" required>
+                </div>
+            </div>
+         </div>
+
+         <div class="row d-flex justify-content-center text-center mt-3">
+            <div class="col-md-2">
+               <button id="loginbtn" name="loginbtn" type="button" class="btn btn-success">
+                  Login
+                  <i class="fas fa-arrow-right"></i>
+               </button>
+            </div>
+         
+         </div>
+
+      </div>
+    <!-- </form> -->
+   </div>
+
+
+ <script src ="../node_modules/jquery/dist/jquery.min.js"></script>
+ <script src="../ScreensBackend/login.js"></script>
+ <script>
+$("#response").hide();
+// $('#loginbtn').click(function(e){
+
+//     var email = document.getElementById("email");
+//     var password = document.getElementById("password");
+
+//         $.ajax({
+//         url: 'http://127.0.0.1:8000/api/login/user-from/desktop',
+//         type: 'POST',
+//         cache: false,
+//         data:  {
+//             email: email,
+//             password: password,
+//         },
+//         success: function (Result) {
+//             //location.reload();
+//             console.log(Result);
+//         },
+//         error: function (data) {
+         
+//         }
+//     });
+
+// });
+
+
+
+ </script>
+  </body>
+</html>
