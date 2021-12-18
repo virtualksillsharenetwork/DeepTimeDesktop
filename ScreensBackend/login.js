@@ -54,7 +54,7 @@ const getLoginInformation = async() => {
     })
     };
 
-    await fetch('http://127.0.0.1:8000/api/login/user-from/desktop',requestOptions)
+    await fetch('https://deeptime-digital.com/api/login/user-from/desktop',requestOptions)
     .then(res => {
         if (res.ok) {
           res.json().then(json => {

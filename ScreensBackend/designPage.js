@@ -31,7 +31,7 @@ let hourrr=0;
   };
   
   
-  await fetch('http://127.0.0.1:8000/api/send/data/user-to/desktop',getUserDataOptions)
+  await fetch('https://deeptime-digital.com/api/send/data/user-to/desktop',getUserDataOptions)
   .then(res => {
       if (res.ok) {
         res.json().then(json => {
@@ -129,7 +129,7 @@ let hourrr=0;
             };
             
             
-             fetch('http://127.0.0.1:8000/api/user/get-nowlasthourminute/data/get',getUserDataOptions)
+             fetch('https://deeptime-digital.com/api/user/get-nowlasthourminute/data/get',getUserDataOptions)
             .then(res => {
                 if (res.ok) {
                   res.json().then(json => {
@@ -661,7 +661,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
                     form.append('org_id',decrypt(roww.org_id,"nyshu55055"));
                     form.append('pro_id',decrypt(roww.pro_id,"nyshu55055"));
                     form.append('file1', Fs.createReadStream('C:\\Users\\'+ScreenCaptures[0]+'\\Documents\\ActiveScreens\\'+ScreenCaptures[1]));
-                    form.submit('http://127.0.0.1:8000/api/upload/data/user-from/desktop', function(err, res) {
+                    form.submit('https://deeptime-digital.com/api/upload/data/user-from/desktop', function(err, res) {
                     if(res.statusCode == 200){
                     //console.log('success');
                             var filepath = 'C:\\Users\\'+ScreenCaptures[0]+'\\Documents\\ActiveScreens\\'+ScreenCaptures[1];
@@ -771,7 +771,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
           };
 
 
-          fetch('http://127.0.0.1:8000/api/user/keyboard/activits/send',getUserDataOptions)
+          fetch('https://deeptime-digital.com/api/user/keyboard/activits/send',getUserDataOptions)
           .then(res => {
           if (res.ok) {
           res.json().then(json => {
@@ -865,7 +865,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
           };
 
 
-          fetch('http://127.0.0.1:8000/api/user/mouse/activits/send',getUserDataOptions)
+          fetch('https://deeptime-digital.com/api/user/mouse/activits/send',getUserDataOptions)
           .then(res => {
           if (res.ok) {
           res.json().then(json => {
@@ -959,7 +959,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
           })
           };
 
-          fetch('http://127.0.0.1:8000/api/user/time/spent/send',getUserDataOptions)
+          fetch('https://deeptime-digital.com/api/user/time/spent/send',getUserDataOptions)
           .then(res => {
           if (res.ok) {
           res.json().then(json => {

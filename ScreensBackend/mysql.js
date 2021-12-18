@@ -155,7 +155,7 @@ const getOrgs = async(email) => {
 };
 
 
-await fetch('http://127.0.0.1:8000/api/user/organizations/enabled/get',getUserDataOptions)
+await fetch('https://deeptime-digital.com/api/user/organizations/enabled/get',getUserDataOptions)
 .then(res => {
     if (res.ok) {
       res.json().then(json => {
@@ -208,7 +208,7 @@ await fetch('http://127.0.0.1:8000/api/user/organizations/enabled/get',getUserDa
                       };
 
 
-                      fetch('http://127.0.0.1:8000/api/user/projects/get',getUserDataOptions)
+                      fetch('https://deeptime-digital.com/api/user/projects/get',getUserDataOptions)
                       .then(res => {
                       if (res.ok) {
                       res.json().then(json => {
