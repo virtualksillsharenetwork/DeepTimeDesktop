@@ -63,7 +63,7 @@ let hourrr=0;
           
             console.log('A row arrived: ', row.email);
             if(row.email != ""){
-
+              correctTheTime(row.email);
               getUser(row.email);
               if(d.getDay() == 0)
             document.getElementById("dayofwork").innerHTML = 'Sun';
@@ -110,11 +110,11 @@ let hourrr=0;
         .pipe(csv())
         .on('data', function (row) {
           
-            
+              
               var org_id = decrypt(row.org_id,"nyshu55055");
               var pro_id = decrypt(row.pro_id,"nyshu55055");
               var email = row1.email;
-
+              getProjectName(org_id,email);
 
 
 
@@ -134,21 +134,33 @@ let hourrr=0;
                 if (res.ok) {
                   res.json().then(json => {
                     console.log(json);
-                    $("#today_hrs").html(json[0].today_hour[0].hour);
-                    $("#today_minuts").html(json[0].today_minute[0].minute);
-                    $("#hours_per_week").html(json[0].lastWeek_hour[0].hour);
-                    $("#minutes_per_week").html(json[0].lastWeek_minute[0].minute);
-                      var hour = $("#hours_per_week").text();
-                      var hourss = parseInt(hour);
-                      hourss = hourss + parseInt(json[0].lastWeek_minute[0].minute % 60);
-                      $("#hours_per_week").html(hourss);
-                      var mins = parseFloat(json[0].lastWeek_minute[0].minute / 60).toFixed(2);
-                      var mins = mins.split(".");
+                    if(json[0].today_hour.length > 0){
+                      $("#today_hrs").html(json[0].today_hour[0].hour);
+                    }if(json[0].today_minute.length > 0){
+                      $("#today_minuts").html(json[0].today_minute[0].minute);
+                    }if(json[0].lastWeek_hour.length > 0){
+                      $("#hours_per_week").html(json[0].lastWeek_hour[0].hours);
+                    }if(json[0].lastWeek_minute.length > 0){
+                      $("#minutes_per_week").html(json[0].lastWeek_minute[0].minute);
+
+                      //var hour = $("#hours_per_week").text();
+                      //var hourss = parseInt(hour);
+                      //hourss = hourss + parseInt(json[0].lastWeek_minute[0].minute / 60);
+                      //$("#hours_per_week").html(hourss);
+                      var mins = parseFloat(json[0].lastWeek_minute[0].minute % 60);
+                      //var mins = mins.split(".");
                       try{
-                      $("#minutes_per_week").html(mins[1]);
+                      $("#minutes_per_week").html(mins);
                       }catch(error){
-                        $("#minutes_per_week").html(mins[0]);
+                        $("#minutes_per_week").html(mins);
                       }
+                    }
+                   
+                   
+                   
+                    
+                      
+                      
             
                   });
                 }
@@ -240,9 +252,9 @@ function pad(val) {
 }
   
   function online(){
-    var togBtn =   document.getElementById("togBtn");
+    //var togBtn =   document.getElementById("togBtn");
     memoo = document.getElementById("memo").value;
-        if(memoo != ''){
+        //if(memoo != ''){
             //sp.kill();
 
           var togBtn =   document.getElementById("togBtn");
@@ -266,14 +278,15 @@ function pad(val) {
           isPaused = !isPaused;
           document.getElementById("memo").readOnly = false; 
           mouse_clicks_detection.kill();
+          togBtn.checked = false;
           }
 
 
-}
-else{
-  alert('Please put a Memo.');
-  togBtn.checked = false;
-}
+//}
+//else{
+  //alert('Please put a Memo.');
+  //togBtn.checked = false;
+//}
 
   }
 
@@ -340,12 +353,17 @@ function Call_Me_After_Every_Minute(){
     }
     //minsLabel.innerHTML = pad(totalSeconds % 60);
     minnn++;
+    tmin = document.getElementById("today_minuts").innerHTML;
+    thour = document.getElementById("today_hrs").innerHTML;
+
+    minute11 = parseInt(tmin) + parseInt(minnn);
+    hour11 = parseInt(thour) + parseInt(hourrr);
     document.getElementById("mins").innerHTML = pad(parseInt(minnn));
     document.getElementById("hourss").innerHTML = pad(parseInt(hourrr));
     //document.getElementById("secnds").innerHTML = pad(parseInt(totalSeconds % 60));
   
-    document.getElementById("today_minuts").innerHTML = pad(parseInt(minnn));
-    document.getElementById("today_hrs").innerHTML = pad(parseInt(hourrr));
+    document.getElementById("today_minuts").innerHTML = pad(parseInt(minute11));
+    document.getElementById("today_hrs").innerHTML = pad(parseInt(hour11));
     }
 
 
@@ -630,7 +648,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
   console.log('A row arrived: ', row1.email);
   if(row1.email != ""){
-    
+    correctTheTime(row1.email);
     
     if (Fs.existsSync('C:/Users/Public/selectedorgpro.csv')) {
 
@@ -835,7 +853,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
   console.log('A row arrived: ', row1.email);
   if(row1.email != ""){
     
-    
+    correctTheTime(row1.email);
 
 
     if (Fs.existsSync('C:/Users/Public/mouseclicks.csv')) {
@@ -1009,11 +1027,64 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
 
 
+const getProjectName = async(projectid,email) => {
+
+  const getUserDataOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      projectid: projectid,
+      email: email
+})
+};
+
+
+await fetch('https://deeptime-digital.com/api/get/data/user-project/name',getUserDataOptions)
+.then(res => {
+    if (res.ok) {
+      res.json().then(json => {
+        //console.log(json.email_address);
+        $("#projectname").html(json.pro_name);
+        
+      });
+    }
+   })
+.catch((error) => {
+  // error callback
+    console.error(error);
+});
+
+  }
 
 
 
+  const correctTheTime = async(email) => {
 
-
+    const getUserDataOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+          email: email
+  })
+  };
+  
+  
+  await fetch('https://deeptime-digital.com/api/send/data-time/user-to/web',getUserDataOptions)
+  .then(res => {
+      //if (res.ok) {
+        //res.json().then(json => {
+          //console.log(json.email_address);
+          
+          
+        //});
+      //}
+     })
+  .catch((error) => {
+    // error callback
+      console.error(error);
+  });
+  
+    }
 
 
 

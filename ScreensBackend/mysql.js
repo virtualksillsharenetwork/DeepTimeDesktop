@@ -144,6 +144,9 @@ function goToTimeTracking(){
 }
 
 
+
+
+
 const getOrgs = async(email) => {
 
   const getUserDataOptions = {
@@ -238,7 +241,28 @@ await fetch('https://deeptime-digital.com/api/user/organizations/enabled/get',ge
 
     }
 
+    function logout(){
 
+
+
+
+      if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
+
+        Fs.unlink('C:/Users/Public/logininfo.csv', (err) => {
+          if (err) throw err;
+          ipc.send('gotoLogin');
+          
+
+
+        });
+
+
+        }
+
+
+
+
+    }
 
 
 
