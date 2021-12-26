@@ -17,6 +17,7 @@ let updateHours_minutes = 0;
 
 let minnn=0;
 let hourrr=0;
+let ten_min = 0;
 
 
 
@@ -114,7 +115,7 @@ let hourrr=0;
               var org_id = decrypt(row.org_id,"nyshu55055");
               var pro_id = decrypt(row.pro_id,"nyshu55055");
               var email = row1.email;
-              getProjectName(org_id,email);
+              getProjectName(org_id,pro_id,email);
 
 
 
@@ -320,7 +321,7 @@ function backtoselection(){
 
 
 function Call_Me_After_Every_Minute(){
-
+  
   
   if (Fs.existsSync('C:/Users/Public/screenshoots.csv')) {
 
@@ -346,24 +347,28 @@ function Call_Me_After_Every_Minute(){
 
 
   if(isPaused) {
-
+    ten_min++;
+    minnn++;
     if(minnn == 60){
       hourrr++;
       minnn=0;
+      thour = document.getElementById("today_hrs").innerHTML;
+      hour11 = parseInt(thour) + 1;
+      document.getElementById("today_hrs").innerHTML = pad(parseInt(hour11));
     }
     //minsLabel.innerHTML = pad(totalSeconds % 60);
-    minnn++;
+    
     tmin = document.getElementById("today_minuts").innerHTML;
-    thour = document.getElementById("today_hrs").innerHTML;
+    
 
-    minute11 = parseInt(tmin) + parseInt(minnn);
-    hour11 = parseInt(thour) + parseInt(hourrr);
+    minute11 = parseInt(tmin) + 1;
+    
     document.getElementById("mins").innerHTML = pad(parseInt(minnn));
     document.getElementById("hourss").innerHTML = pad(parseInt(hourrr));
     //document.getElementById("secnds").innerHTML = pad(parseInt(totalSeconds % 60));
   
     document.getElementById("today_minuts").innerHTML = pad(parseInt(minute11));
-    document.getElementById("today_hrs").innerHTML = pad(parseInt(hour11));
+    
     }
 
 
@@ -743,8 +748,10 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
 
 
-
+  
 //upload keyboard data to server
+if(ten_min == 10){
+
 
 if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
@@ -771,12 +778,14 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
       inputStream
       .pipe(csv())
       .on('data', function (row2) {
-
+        var dd = new Date();
+        var timee = dd.getHours()+":"+dd.getMinutes()
         var tts=[{
           "org_id": decrypt(row2.org_id,"nyshu55055"),
           "pro_id":decrypt(row2.pro_id,"nyshu55055"),
           "clicks":decrypt(row2.clicks,"nyshu55055"),
-          "date":row2.date
+          "date":decrypt(row2.date,"nyshu55055"),
+          "time":timee
         }];
 
         const getUserDataOptions = {
@@ -795,10 +804,10 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
           res.json().then(json => {
           
           if(json == 'success'){
-            Fs.unlink('C:/Users/Public/keyboardpress.csv', (err) => {
-              if (err) throw err;
+            //Fs.unlink('C:/Users/Public/keyboardpress.csv', (err) => {
+              //if (err) throw err;
             console.log('keyboard upload success');
-            });
+            //});
             
           }
 
@@ -865,12 +874,14 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
       inputStream
       .pipe(csv())
       .on('data', function (row2) {
-
+        var dd = new Date();
+        var timee = dd.getHours()+":"+dd.getMinutes()
         var tts=[{
           "org_id": decrypt(row2.org_id,"nyshu55055"),
           "pro_id":decrypt(row2.pro_id,"nyshu55055"),
           "clicks":decrypt(row2.clicks,"nyshu55055"),
-          "date":row2.date
+          "date":decrypt(row2.date,"nyshu55055"),
+          "time":timee
         }];
 
         const getUserDataOptions = {
@@ -889,10 +900,10 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
           res.json().then(json => {
           
           if(json == 'success'){
-             Fs.unlink('C:/Users/Public/mouseclicks.csv', (err) => {
-              if (err) throw err;
+             //Fs.unlink('C:/Users/Public/mouseclicks.csv', (err) => {
+              //if (err) throw err;
             console.log('mouse upload success');
-            });
+            //});
             
           }
           });
@@ -922,8 +933,8 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
 //upload mouseclicks data to server
 
-
-
+ten_min = 0;
+}
 
 
 
@@ -965,7 +976,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
                     "hour":decrypt(row2.hour,"nyshu55055"),
                     "minute":decrypt(row2.minute,"nyshu55055"),
                     "memo":row2.memo,
-                    "date":row2.date
+                    "date":row2.date,
                   }];
                   console.log('A row arrived: ', tts);
         const getUserDataOptions = {
@@ -1027,13 +1038,13 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
 
 
-const getProjectName = async(projectid,email) => {
+const getProjectName = async(org_id,pro_id,email) => {
 
   const getUserDataOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ 
-      projectid: projectid,
+      projectid: pro_id,
       email: email
 })
 };
