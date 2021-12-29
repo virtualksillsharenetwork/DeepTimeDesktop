@@ -18,6 +18,88 @@ let updateHours_minutes = 0;
 let minnn=0;
 let hourrr=0;
 let ten_min = 0;
+let imagerename = 0;
+
+
+
+const getProjectName = async(org_id,pro_id,email) => {
+
+  const getUserDataOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      projectid: pro_id,
+      email: email
+})
+};
+
+
+await fetch('https://deeptime-digital.com/api/get/data/user-project/name',getUserDataOptions)
+.then(res => {
+    if (res.ok) {
+      res.json().then(json => {
+        //console.log(json.email_address);
+        $("#projectname").html(json.pro_name);
+        
+      });
+    }
+   })
+.catch((error) => {
+  // error callback
+    console.error(error);
+});
+
+  }
+
+
+const correctTheTime = async(email) => {
+
+  const getUserDataOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+        email: email
+})
+};
+
+
+await fetch('https://deeptime-digital.com/api/send/data-time/user-to/web',getUserDataOptions)
+.then(res => {
+    //if (res.ok) {
+      //res.json().then(json => {
+        //console.log(json.email_address);
+        
+        
+      //});
+    //}
+   })
+.catch((error) => {
+  // error callback
+    console.error(error);
+});
+
+  }
+// const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+          
+//       const csvWriter = createCsvWriter({
+//                 path: 'C:/Users/Public/sst.csv',
+//                 header: [
+//                     {id: 'mins', title: 'mins'}
+//                 ]
+//             });
+            
+//             const records = [
+//                 {mins: sstimemanage.toString()}
+//             ];
+             
+//             csvWriter.writeRecords(records)       // returns a promise
+//                 .then(() => {
+//                     console.log('...Done SSmin');
+//                 });
+
+
+
+
 
 
 
@@ -136,24 +218,24 @@ let ten_min = 0;
                   res.json().then(json => {
                     console.log(json);
                     if(json[0].today_hour.length > 0){
-                      $("#today_hrs").html(json[0].today_hour[0].hour);
+                      $("#today_hrs").html(pad(json[0].today_hour[0].hour));
                     }if(json[0].today_minute.length > 0){
-                      $("#today_minuts").html(json[0].today_minute[0].minute);
+                      $("#today_minuts").html(pad(json[0].today_minute[0].minute));
                     }if(json[0].lastWeek_hour.length > 0){
-                      $("#hours_per_week").html(json[0].lastWeek_hour[0].hours);
+                      $("#hours_per_week").html(pad(json[0].lastWeek_hour[0].hours));
                     }if(json[0].lastWeek_minute.length > 0){
-                      $("#minutes_per_week").html(json[0].lastWeek_minute[0].minute);
+                      $("#minutes_per_week").html(pad(json[0].lastWeek_minute[0].minutes));
 
-                      //var hour = $("#hours_per_week").text();
-                      //var hourss = parseInt(hour);
-                      //hourss = hourss + parseInt(json[0].lastWeek_minute[0].minute / 60);
-                      //$("#hours_per_week").html(hourss);
-                      var mins = parseFloat(json[0].lastWeek_minute[0].minute % 60);
+                      var hour = $("#hours_per_week").text();
+                      var hourss = parseInt(hour);
+                      hourss = hourss + parseInt(json[0].lastWeek_minute[0].minutes / 60);
+                      $("#hours_per_week").html(pad(hourss));
+                      var mins = parseFloat(json[0].lastWeek_minute[0].minutes % 60);
                       //var mins = mins.split(".");
                       try{
-                      $("#minutes_per_week").html(mins);
+                      $("#minutes_per_week").html(pad(mins));
                       }catch(error){
-                        $("#minutes_per_week").html(mins);
+                        $("#minutes_per_week").html(pad(mins));
                       }
                     }
                    
@@ -213,27 +295,25 @@ let ten_min = 0;
 
 
 
-    if (Fs.existsSync('C:/Users/Public/screenshoots.csv')) {
+    // if (Fs.existsSync('C:/Users/Public/screenshoots.csv')) {
 
-      const CsvReadableStream = require('csv-reader');
+    //   const CsvReadableStream = require('csv-reader');
   
-      let inputStream = Fs.createReadStream('C:/Users/Public/screenshoots.csv', 'utf8');
+    //   let inputStream = Fs.createReadStream('C:/Users/Public/screenshoots.csv', 'utf8');
   
-      inputStream
-      .pipe(csv())
-      .on('data', function (row1) {
+    //   inputStream
+    //   .pipe(csv())
+    //   .on('data', function (row1) {
   
-        const ScreenCaptures = row1.path.split("|");
-        jQuery(document).ready(function($){
-          $("#lastSS").prop("src", "C:\\Users\\"+ScreenCaptures[0]+"\\Documents\\ActiveScreens\\"+ScreenCaptures[1]);
-        });
+    //     const ScreenCaptures = row1.path.split("|");
+    cj();
   
-      })
-      .on('end', function () {
-      //console.log('No more rows!');
-      });
+      // })
+      // .on('end', function () {
+      // //console.log('No more rows!');
+      // });
   
-      }
+      // }
 
 
 
@@ -242,13 +322,13 @@ setInterval(Call_Me_After_Every_Minute,60000); //60000 seconds = 1 minute
 
 
 function pad(val) {
-  if(isPaused) {
+  //if(isPaused) {
   var valString = val + "";
   if (valString.length < 2) {
     return "0" + valString;
   } else {
     return valString;
-  }
+  //}
 }
 }
   
@@ -321,31 +401,48 @@ function backtoselection(){
 
 
 function Call_Me_After_Every_Minute(){
+  // if(isPaused) {
+
+  //   if(sstimemanage == 0){
+  //       sstimemanage = 600000;
+  //   }
+  //   else{
+  //     sstimemanage = sstimemanage-60000;
+  //     const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+          
+  //     const csvWriter = createCsvWriter({
+  //               path: 'C:/Users/Public/sst.csv',
+  //               header: [
+  //                   {id: 'mins', title: 'mins'}
+  //               ]
+  //           });
+            
+  //           const records = [
+  //               {mins: sstimemanage.toString()}
+  //           ];
+             
+  //           csvWriter.writeRecords(records)       // returns a promise
+  //               .then(() => {
+  //                   console.log('...Done SSmin');
+  //               });    
+  //   }
+   
+          
+  //     }
   
-  
-  if (Fs.existsSync('C:/Users/Public/screenshoots.csv')) {
-
-    const CsvReadableStream = require('csv-reader');
-
-    let inputStream = Fs.createReadStream('C:/Users/Public/screenshoots.csv', 'utf8');
-
-    inputStream
-    .pipe(csv())
-    .on('data', function (row1) {
-
-      const ScreenCaptures = row1.path.split("|");
-      jQuery(document).ready(function($){
-        $("#lastSS").prop("src", "C:\\Users\\"+ScreenCaptures[0]+"\\Documents\\ActiveScreens\\"+ScreenCaptures[1]);
-      });
-
-    })
-    .on('end', function () {
-    //console.log('No more rows!');
-    });
-
-    }
+  //if (Fs.existsSync('C:/Users/Public/LastCapture.jpg')) {
+    
+    //console.log('not exist');
+  //}
+  //else{
+    //console.log('not exist');
+  //}
 
 
+
+
+
+  cj();
   if(isPaused) {
     ten_min++;
     minnn++;
@@ -355,20 +452,21 @@ function Call_Me_After_Every_Minute(){
       thour = document.getElementById("today_hrs").innerHTML;
       hour11 = parseInt(thour) + 1;
       document.getElementById("today_hrs").innerHTML = pad(parseInt(hour11));
+      document.getElementById("today_minuts").innerHTML = pad(minnn);
     }
-    //minsLabel.innerHTML = pad(totalSeconds % 60);
-    
-    tmin = document.getElementById("today_minuts").innerHTML;
+    else{
+      tmin = document.getElementById("today_minuts").innerHTML;
     
 
-    minute11 = parseInt(tmin) + 1;
+      minute11 = parseInt(tmin) + 1;
+      
+      document.getElementById("mins").innerHTML = pad(parseInt(minnn));
+      document.getElementById("hourss").innerHTML = pad(parseInt(hourrr));
+      //document.getElementById("secnds").innerHTML = pad(parseInt(totalSeconds % 60));
     
-    document.getElementById("mins").innerHTML = pad(parseInt(minnn));
-    document.getElementById("hourss").innerHTML = pad(parseInt(hourrr));
-    //document.getElementById("secnds").innerHTML = pad(parseInt(totalSeconds % 60));
-  
-    document.getElementById("today_minuts").innerHTML = pad(parseInt(minute11));
-    
+      document.getElementById("today_minuts").innerHTML = pad(parseInt(minute11));
+    }
+    //minsLabel.innerHTML = pad(totalSeconds % 60);
     }
 
 
@@ -408,7 +506,7 @@ if(isPaused) {
           let monthh = parseInt(d.getMonth())+1;
 
           const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-        const csvWriter = createCsvWriter({
+          const csvWriter = createCsvWriter({
             path: 'C:/Users/Public/totaltimeonproject.csv',
             header: [
                 {id: 'org_id', title: 'org_id'},
@@ -642,7 +740,7 @@ if(isPaused) {
 
   
 if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
-
+  
   const CsvReadableStream = require('csv-reader');
 
   let inputStream = Fs.createReadStream('C:/Users/Public/logininfo.csv', 'utf8');
@@ -651,7 +749,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
   .pipe(csv())
   .on('data', function (row1) {
 
-  console.log('A row arrived: ', row1.email);
+  //console.log('A row arrived: ', row1.email);
   if(row1.email != ""){
     correctTheTime(row1.email);
     
@@ -779,12 +877,72 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
       .pipe(csv())
       .on('data', function (row2) {
         var dd = new Date();
-        var timee = dd.getHours()+":"+dd.getMinutes()
+        var timee = pad(dd.getHours())+":"+pad(dd.getMinutes());
         var tts=[{
           "org_id": decrypt(row2.org_id,"nyshu55055"),
           "pro_id":decrypt(row2.pro_id,"nyshu55055"),
           "clicks":decrypt(row2.clicks,"nyshu55055"),
           "date":decrypt(row2.date,"nyshu55055"),
+          "time":timee
+        }];
+
+        const getUserDataOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+          email: row1.email,
+          keybboardactivites: JSON.stringify(tts)
+          })
+          };
+
+
+          fetch('https://deeptime-digital.com/api/user/keyboard/activits/send',getUserDataOptions)
+          .then(res => {
+          if (res.ok) {
+          res.json().then(json => {
+          
+          if(json == 'success'){
+            Fs.unlink('C:/Users/Public/keyboardpress.csv', (err) => {
+              if (err) throw err;
+            console.log('keyboard upload success');
+            });
+            
+          }
+
+          });
+          }
+          })
+          .catch((error) => {
+          // error callback
+          console.error(error);
+          });
+
+
+
+      })
+      .on('end', function () {
+      //console.log('No more rows!');
+      });
+    
+      }
+      else{
+        //not exist
+      const CsvReadableStream = require('csv-reader');
+    
+      let inputStream = Fs.createReadStream('C:/Users/Public/selectedorgpro.csv', 'utf8');
+    
+      inputStream
+      .pipe(csv())
+      .on('data', function (row2) {
+        var dd = new Date();
+        var timee = pad(dd.getHours())+":"+pad(dd.getMinutes());
+        var mnth = dd.getMonth()+1;
+        var datee = dd.getFullYear()+"-"+mnth+"-"+dd.getDate();
+        var tts=[{
+          "org_id": decrypt(row2.org_id,"nyshu55055"),
+          "pro_id":decrypt(row2.pro_id,"nyshu55055"),
+          "clicks":"0",
+          "date":datee,
           "time":timee
         }];
 
@@ -825,7 +983,6 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
       .on('end', function () {
       //console.log('No more rows!');
       });
-    
       }
   }
   })
@@ -875,12 +1032,71 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
       .pipe(csv())
       .on('data', function (row2) {
         var dd = new Date();
-        var timee = dd.getHours()+":"+dd.getMinutes()
+        var timee = pad(dd.getHours())+":"+pad(dd.getMinutes());
         var tts=[{
           "org_id": decrypt(row2.org_id,"nyshu55055"),
           "pro_id":decrypt(row2.pro_id,"nyshu55055"),
           "clicks":decrypt(row2.clicks,"nyshu55055"),
           "date":decrypt(row2.date,"nyshu55055"),
+          "time":timee
+        }];
+
+        const getUserDataOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+          email: row1.email,
+          keybboardactivites: JSON.stringify(tts)
+          })
+          };
+
+
+          fetch('https://deeptime-digital.com/api/user/mouse/activits/send',getUserDataOptions)
+          .then(res => {
+          if (res.ok) {
+          res.json().then(json => {
+          
+          if(json == 'success'){
+             Fs.unlink('C:/Users/Public/mouseclicks.csv', (err) => {
+              if (err) throw err;
+            console.log('mouse upload success');
+            });
+            
+          }
+          });
+          }
+          })
+          .catch((error) => {
+          // error callback
+          console.error(error);
+          });
+
+
+
+      })
+      .on('end', function () {
+      //console.log('No more rows!');
+      });
+    
+      }
+      else{
+        //not exist
+      const CsvReadableStream = require('csv-reader');
+    
+      let inputStream = Fs.createReadStream('C:/Users/Public/selectedorgpro.csv', 'utf8');
+    
+      inputStream
+      .pipe(csv())
+      .on('data', function (row2) {
+        var dd = new Date();
+        var timee = pad(dd.getHours())+":"+pad(dd.getMinutes());
+        var mnth = dd.getMonth()+1;
+        var datee = dd.getFullYear()+"-"+mnth+"-"+dd.getDate();
+        var tts=[{
+          "org_id": decrypt(row2.org_id,"nyshu55055"),
+          "pro_id":decrypt(row2.pro_id,"nyshu55055"),
+          "clicks":"0",
+          "date":datee,
           "time":timee
         }];
 
@@ -920,7 +1136,6 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
       .on('end', function () {
       //console.log('No more rows!');
       });
-    
       }
   }
   })
@@ -1038,64 +1253,10 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
 
 
-const getProjectName = async(org_id,pro_id,email) => {
-
-  const getUserDataOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-      projectid: pro_id,
-      email: email
-})
-};
-
-
-await fetch('https://deeptime-digital.com/api/get/data/user-project/name',getUserDataOptions)
-.then(res => {
-    if (res.ok) {
-      res.json().then(json => {
-        //console.log(json.email_address);
-        $("#projectname").html(json.pro_name);
-        
-      });
-    }
-   })
-.catch((error) => {
-  // error callback
-    console.error(error);
-});
-
-  }
 
 
 
-  const correctTheTime = async(email) => {
 
-    const getUserDataOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-          email: email
-  })
-  };
-  
-  
-  await fetch('https://deeptime-digital.com/api/send/data-time/user-to/web',getUserDataOptions)
-  .then(res => {
-      //if (res.ok) {
-        //res.json().then(json => {
-          //console.log(json.email_address);
-          
-          
-        //});
-      //}
-     })
-  .catch((error) => {
-    // error callback
-      console.error(error);
-  });
-  
-    }
 
 
 
@@ -1195,3 +1356,31 @@ await fetch('https://deeptime-digital.com/api/get/data/user-project/name',getUse
     
     
     //encryption code
+
+    function cj(){
+      imagerename++;
+      var lastpic = imagerename-1;
+      if(Fs.existsSync('C:/Users/Public/LastCapture.jpg')){
+        Fs.rename("C:\\Users\\Public\\LastCapture.jpg", "C:\\Users\\Public\\LastCapture_"+imagerename+".jpg" ,(err) => {
+          if (err) throw err;
+          console.log('Rename complete!');
+        });
+        Fs.unlink('C:/Users/Public/LastCapture_'+lastpic+'.jpg', (err) => {
+          if (err) throw err;
+        });
+
+
+      }
+      else{
+        
+        Fs.rename("C:\\Users\\Public\\LastCapture_"+lastpic+".jpg", "C:\\Users\\Public\\LastCapture_"+imagerename+".jpg",(err) => {
+          if (err) throw err;
+          console.log('Rename complete!');
+        });
+      }
+
+      $("#lastSSdiv").html('');
+      var show_picscode =   '<img src="C:\\Users\\Public\\LastCapture_'+imagerename+'.jpg" id="lastSS" name="lastSS" alt="Current Screen Shoot" style="width: 340px;height: 200px;">';
+      $("#lastSSdiv").append(show_picscode);
+      console.log('changed');
+    }
