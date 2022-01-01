@@ -31,7 +31,7 @@ app.whenReady().then(() => {
 
 
   mainwindow = new BrowserWindow({ 
-    width: 330,//370
+    width: 700,//330
     height: 600,//660 
     resizable: true,
     fullscreen: false,
