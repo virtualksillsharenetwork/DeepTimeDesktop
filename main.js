@@ -63,6 +63,7 @@ app.whenReady().then(() => {
   });
   ipcMain.on("gotoLogin", (event, arg) => {
     gotoLogin();
+   
   });
 
   })
@@ -106,12 +107,15 @@ const createWindow = () => {
 
 
   function gotoLogin() {
+    
     mainwindow.setMenuBarVisibility(false)
     mainwindow.loadFile('Screens/login.html')
     //mainwindow.webContents.openDevTools();
     // childWindow.once("ready-to-show", () => {
     //   childWindow.show();
     // });
+    app.relaunch()
+    app.exit()
   }
 
 

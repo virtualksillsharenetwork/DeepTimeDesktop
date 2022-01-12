@@ -3,7 +3,7 @@ const ipc = window.require('electron').ipcRenderer;
 const Fs = require('fs');
 const csv = require('csv-parser');
 var CryptoJS = require('crypto-js');
-
+var os = require('os');
 
 
         if (Fs.existsSync('C:/Users/Public/selectedorgpro.csv')) {
@@ -243,23 +243,68 @@ await fetch('https://deeptime-digital.com/api/user/organizations/enabled/get',ge
 
     function logout(){
 
-
-
-
       if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
         Fs.unlink('C:/Users/Public/logininfo.csv', (err) => {
           if (err) throw err;
-          ipc.send('gotoLogin');
           
-
 
         });
 
-
         }
 
+        if (Fs.existsSync('C:/Users/Public/keyboardpress.csv')) {
 
+          Fs.unlink('C:/Users/Public/keyboardpress.csv', (err) => {
+            if (err) throw err;
+            
+          });
+          
+        }
+
+        if (Fs.existsSync('C:/Users/Public/mouseclicks.csv')) {
+
+            Fs.unlink('C:/Users/Public/mouseclicks.csv', (err) => {
+              if (err) throw err;
+              //ipc.send('gotoLogin');
+    
+            });
+            
+        }
+        if (Fs.existsSync('C:/Users/Public/screenshoots.csv')) {
+
+          Fs.unlink('C:/Users/Public/screenshoots.csv', (err) => {
+            if (err) throw err;
+            //ipc.send('gotoLogin');
+  
+          });
+          
+      }
+            
+        if (Fs.existsSync('C:/Users/Public/selectedorgpro.csv')) {
+
+              Fs.unlink('C:/Users/Public/selectedorgpro.csv', (err) => {
+                if (err) throw err;
+                //ipc.send('gotoLogin');
+      
+              });
+              
+        }
+        
+        const computerName = os.userInfo();
+        //console.log(computerName.username);
+        const dir = 'C:\\Users\\'+computerName.username+'\\Documents\\ActiveScreens';
+
+            // delete directory recursively
+        try {
+            Fs.rmdirSync(dir, { recursive: true });
+
+            console.log(`${dir} is deleted!`);
+        } catch (err) {
+            console.error(`Error while deleting ${dir}.`);
+        }
+
+        ipc.send('gotoLogin');
 
 
     }

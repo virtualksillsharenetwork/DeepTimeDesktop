@@ -6,6 +6,13 @@ var FormData = require('form-data');
 const Fs = require('fs');
 const csv = require('csv-parser');
 var CryptoJS = require('crypto-js');
+const checkInternetConnected = require('check-internet-connected');
+const config = {
+  timeout: 5000, //timeout connecting to each server, each try
+  retries: 5,//number of retries to do before failing
+  domain: 'https://www.google.com/',//the domain to check DNS record of
+}
+checkInternetConnected(config);
 
 let mouse_clicks_detection;
 var isPaused = false;
@@ -311,6 +318,17 @@ function pad(val) {
   /* ****************************************************online button click************************************************************* */
 
   function online(){
+
+
+    require('dns').resolve('www.google.com', function(err) {
+      if (err) {
+        
+         alert("Check Internet Connection and Try Again.");
+
+      } else {
+
+
+
       memoo = document.getElementById("memo").value;
 
       var togBtn =   document.getElementById("togBtn");
@@ -330,6 +348,9 @@ function pad(val) {
       //mouse_clicks_detection.kill();
       togBtn.checked = false;
       }
+
+    }
+    });
 
   }
 
@@ -366,7 +387,9 @@ function backtoselection(){
 
 
 
-function Call_Me_After_Every_Minute(){
+function Call_Me_After_Every_Minute(){ 
+
+
 
   /* ****************************************************change cache of image************************************************************* */
   change_cache++;
@@ -401,11 +424,12 @@ function Call_Me_After_Every_Minute(){
     }
     //minsLabel.innerHTML = pad(totalSeconds % 60);
     }
-    timeCorrectUI();
+    //timeCorrectUI();
 
 /* ****************************************************update minutes************************************************************* */
 
 if(isPaused) {
+  if(updateHours_minutes != 60){
 
   if (Fs.existsSync('C:/Users/Public/selectedorgpro.csv')) {
 
@@ -460,13 +484,14 @@ if(isPaused) {
              hour: encrypt('0','nyshu55055'), 
              minute: encrypt(add_minutes.toString(),'nyshu55055'), 
              memo: memoo, 
-             date: d.getFullYear()+"-"+monthh+"-"+d.getDate()
+             date: pad(d.getFullYear())+"-"+pad(monthh)+"-"+pad(d.getDate())
             }
         ];
          
         csvWriter.writeRecords(records)       // returns a promise
             .then(() => {
                // console.log('...minute update Done');
+               setTheTime();
             });     
           
         })
@@ -504,13 +529,14 @@ if(isPaused) {
              hour: encrypt('0','nyshu55055'), 
              minute: encrypt('1','nyshu55055'), 
              memo: memoo, 
-             date: d.getFullYear()+"-"+monthh+"-"+d.getDate()
+             date: pad(d.getFullYear())+"-"+pad(monthh)+"-"+pad(d.getDate())
             }
         ];
          
         csvWriter.writeRecords(records)       // returns a promise
             .then(() => {
                // console.log('...minute create Done');
+               setTheTime();
             });
 
       }
@@ -522,8 +548,10 @@ if(isPaused) {
 
     }
 
-
   }
+  }
+
+  
 /* ****************************************************update hours************************************************************* */
 
   if(isPaused) { 
@@ -581,13 +609,14 @@ if(isPaused) {
                  hour: encrypt(add_hours.toString(),'nyshu55055'), 
                  minute: encrypt('0','nyshu55055'), 
                  memo: memoo, 
-                 date: d.getFullYear()+"-"+monthh+"-"+d.getDate()
+                 date: pad(d.getFullYear())+"-"+pad(monthh)+"-"+pad(d.getDate())
                 }
             ];
              
             csvWriter.writeRecords(records)       // returns a promise
                 .then(() => {
                     //console.log('...hour update Done');
+                    setTheTime();
                 });     
               
             })
@@ -624,13 +653,14 @@ if(isPaused) {
                  hour: encrypt('1','nyshu55055'), 
                  minute: encrypt('0','nyshu55055'), 
                  memo: memoo, 
-                 date: d.getFullYear()+"-"+monthh+"-"+d.getDate()
+                 date: pad(d.getFullYear())+"-"+pad(monthh)+"-"+pad(d.getDate())
                 }
             ];
              
             csvWriter.writeRecords(records)       // returns a promise
                 .then(() => {
                     //console.log('...hour create Done');
+                    setTheTime();
                 });
     
           }
@@ -647,6 +677,9 @@ if(isPaused) {
 
     }
   }
+
+
+  
 /* ****************************************************upload image data to server********************************************************* */
 
 if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
@@ -687,8 +720,12 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
     
     
             var form = new FormData();
+              var dfd = new Date();
+              let monthh = parseInt(dfd.getMonth())+1;
+              var timee = dfd.getFullYear()+"-"+pad(monthh)+"-"+pad(dfd.getDate());
                     const ScreenCaptures = row2.path.split("|");
                     form.append('email', row1.email);
+                    form.append('datee', timee);
                     form.append('org_id',decrypt(roww.org_id,"nyshu55055"));
                     form.append('pro_id',decrypt(roww.pro_id,"nyshu55055"));
                     form.append('file1', Fs.createReadStream('C:\\Users\\'+ScreenCaptures[0]+'\\Documents\\ActiveScreens\\'+ScreenCaptures[1]));
@@ -808,10 +845,10 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
           res.json().then(json => {
             
           if(json == 'success'){
-           // console.log('keyboard data upload success');
+            console.log('keyboard data upload success');
             Fs.unlink('C:/Users/Public/keyboardpress.csv', (err) => {
               if (err) throw err;
-             // console.log('keyboard csv deleted');
+              console.log('keyboard csv deleted');
             });
             
           }
@@ -871,7 +908,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
           if(json == 'success'){
             //Fs.unlink('C:/Users/Public/keyboardpress.csv', (err) => {
               //if (err) throw err;
-            //console.log('keyboard data upload success');
+            console.log('keyboard data upload success');
             //});
             
           }
@@ -952,10 +989,10 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
           res.json().then(json => {
           
           if(json == 'success'){
-           // console.log('mouse data upload success');
+            console.log('mouse data upload success');
              Fs.unlink('C:/Users/Public/mouseclicks.csv', (err) => {
               if (err) throw err;
-            //console.log('mouse csv deleted success');
+            console.log('mouse csv deleted success');
             });
             
           }
@@ -1014,7 +1051,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
           if(json == 'success'){
              //Fs.unlink('C:/Users/Public/mouseclicks.csv', (err) => {
               //if (err) throw err;
-            //console.log('mouse data upload success');
+            console.log('mouse data upload success');
             //});
             
           }
@@ -1046,95 +1083,18 @@ ten_min = 0;
 
 /* ****************************************************upload time function*********************************************** */
 
-if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
-
-  const CsvReadableStream = require('csv-reader');
-
-  let inputStream = Fs.createReadStream('C:/Users/Public/logininfo.csv', 'utf8');
-
-  inputStream
-  .pipe(csv())
-  .on('data', function (row1) {
-
-  //console.log('A row arrived: ', row1.email);
-  if(row1.email != ""){
-    
 
 
-    if (Fs.existsSync('C:/Users/Public/totaltimeonproject.csv')) {
+  //timeCorrectUI();
 
-      const CsvReadableStream = require('csv-reader');
-    
-      let inputStream = Fs.createReadStream('C:/Users/Public/totaltimeonproject.csv', 'utf8');
-    
-      inputStream
-      .pipe(csv())
-      .on('data', function (row2) {
-    
-      //console.log('A row arrived: ', JSON.stringify(row2));
-      if(row2.org_id != ""){
-        var tts=[{
-                    "org_id": decrypt(row2.org_id,"nyshu55055"),
-                    "pro_id": decrypt(row2.pro_id,"nyshu55055"),
-                    "day":row2.day,
-                    "month":row2.month,
-                    "year":row2.year,
-                    "hour":decrypt(row2.hour,"nyshu55055"),
-                    "minute":decrypt(row2.minute,"nyshu55055"),
-                    "memo":row2.memo,
-                    "date":row2.date,
-                  }];
-                  //console.log('A row arrived: ', tts);
-        const getUserDataOptions = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-          email: row1.email,
-          keybboardactivites: JSON.stringify(tts)
-          })
-          };
-
-          fetch('https://deeptime-digital.com/api/user/time/spent/send',getUserDataOptions)
-          .then(res => {
-          if (res.ok) {
-          res.json().then(json => {
-          
-          if(json == 'success'){
-            console.log('time upload success');
-            Fs.unlink('C:/Users/Public/totaltimeonproject.csv', (err) => {
-              if (err) throw err;
-              console.log('time csv deleted success');
-              console.log(decrypt(row2.minute,"nyshu55055"));
-            });
-            
-
-          }
-
-          });
-          }
-          })
-          .catch((error) => {
-          // error callback
-          console.error(error);
-          });
-    
-      }
-      })
-      .on('end', function () {
-      //console.log('No more rows!');
-      });
-    
-      }
-
-  }
-  })
-  .on('end', function () {
-  //console.log('No more rows!');
-  });
-
-  }
-
-
+// }
+// else{
+//   isPaused = false;
+//         document.getElementById("memo").readOnly = false; 
+//         togBtn.checked = false;
+//         alert("Check Internet Connection and Try Again.");
+//         TimeStop();
+// }
 
 }
 
@@ -1142,8 +1102,23 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 /* ****************************************************end timer function*********************************************** */
 
 
-
-
+/* ****************************************************check internet function************************************************************* */
+function InternetConnection () {
+    checkInternetConnected()
+      .then((result) => {
+        console.log(result);
+        return true;
+      })
+      .catch((ex) => {
+        console.log(ex); // cannot connect to a server or error occurred.
+        // isPaused = false;
+        // document.getElementById("memo").readOnly = false; 
+        // togBtn.checked = false;
+        // alert("Check Internet Connection and Try Again.");
+        // TimeStop();
+        return false;
+    });
+}
 
   /* ****************************************************time contnue************************************************************* */
 
@@ -1195,7 +1170,201 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
 
 
+  function setTheTime(){
+    if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
+      const CsvReadableStream = require('csv-reader');
+    
+      let inputStream = Fs.createReadStream('C:/Users/Public/logininfo.csv', 'utf8');
+    
+      inputStream
+      .pipe(csv())
+      .on('data', function (row1) {
+    
+      //console.log('A row arrived: ', row1.email);
+      if(row1.email != ""){
+        
+    
+    
+        if (Fs.existsSync('C:/Users/Public/totaltimeonproject.csv')) {
+    
+          const CsvReadableStream = require('csv-reader');
+        
+          let inputStream = Fs.createReadStream('C:/Users/Public/totaltimeonproject.csv', 'utf8');
+        
+          inputStream
+          .pipe(csv())
+          .on('data', function (row2) {
+        
+          //console.log('A row arrived from time file: '+row2);
+          if(row2.org_id != ""){
+            var tts=[{
+                        "org_id": decrypt(row2.org_id,"nyshu55055"),
+                        "pro_id": decrypt(row2.pro_id,"nyshu55055"),
+                        "day":row2.day,
+                        "month":row2.month,
+                        "year":row2.year,
+                        "hour":decrypt(row2.hour,"nyshu55055"),
+                        "minute":decrypt(row2.minute,"nyshu55055"),
+                        "memo":row2.memo,
+                        "date":row2.date,
+                      }];
+                      //console.log('A row arrived: ', tts);
+            const getUserDataOptions = {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ 
+              email: row1.email,
+              keybboardactivites: JSON.stringify(tts)
+              })
+              };
+    
+              fetch('https://deeptime-digital.com/api/user/time/spent/send',getUserDataOptions)
+              .then(res => {
+              if (res.ok) {
+              res.json().then(json => {
+              
+              if(json == 'success'){
+                console.log('success');
+                Fs.unlink('C:/Users/Public/totaltimeonproject.csv', (err) => {
+                  if (err) throw err;
+                  //console.log('time csv deleted success');
+                  //console.log(decrypt(row2.minute,"nyshu55055"));
+                });
+                
+    
+              }
+              else if(json == 'failed'){
+                console.log('failed');
+                setTheTime();
+              }
+              else{
+                setTheTime();
+              }
+    
+              });
+              //console.log(res);
+              }
+              else{
+                console.log('not ok');
+                setTheTime();
+              }
+              })
+              .catch((error) => {
+              // error callback
+              //console.error(error);
+                setTheTime();
+              });
+        
+          }
+          })
+          .on('end', function () {
+          //console.log('No more rows!');
+          });
+        
+          }
+          else{
+            //file not exist
+    
+            if(isPaused){
+              if(updateHours_minutes != 60){
+    
+            if (Fs.existsSync('C:/Users/Public/selectedorgpro.csv')) {
+    
+              const CsvReadableStream = require('csv-reader');
+          
+              let inputStream = Fs.createReadStream('C:/Users/Public/selectedorgpro.csv', 'utf8');
+          
+              inputStream
+              .pipe(csv())
+              .on('data', function (row1w) {
+          
+              //console.log('A row arrived: ', row1.email);
+              if(row1w.org_id != "" && row1w.pro_id != "" && row1w.date != ""){
+    
+                let monthh = parseInt(d.getMonth())+1;
+          
+              //console.log('A row arrived from orgpro file:');
+              var tts=[{
+                          "org_id": decrypt(row1w.org_id,"nyshu55055"),
+                          "pro_id": decrypt(row1w.pro_id,"nyshu55055"),
+                          "day":d.getDate().toString(),
+                          "month":monthh.toString(),
+                          "year":d.getFullYear().toString(),
+                          "hour": '0',
+                          "minute": '1',
+                          "memo": '',
+                          "date":d.getFullYear()+"-"+pad(monthh)+"-"+pad(d.getDate()),
+                        }];
+                        //console.log('A row arrived: ', tts);
+              const getUserDataOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                email: row1.email,
+                keybboardactivites: JSON.stringify(tts)
+                })
+                };
+      
+                fetch('https://deeptime-digital.com/api/user/time/spent/minute',getUserDataOptions)
+                .then(res => {
+                if (res.ok) {
+                res.json().then(json => {
+                
+                if(json == 'success'){
+                  console.log('success');
+                  
+                }
+                else if(json == 'failed'){
+                  console.log('failed');
+                  setTheTime();
+                }
+                else{
+                  //console.log('not upload');
+                  setTheTime();
+                }
+      
+                });
+                }
+                else{
+                  console.log('not ok');
+                  setTheTime();
+                }
+                //console.log(res);
+                })
+                .catch((error) => {
+                // error callback
+                //console.error(error);
+                setTheTime();
+                });
+              
+    
+          }
+    
+    
+        })
+        .on('end', function () {
+        //console.log('No more rows!');
+        });
+      }
+              }
+           }
+    
+    
+    
+    
+    
+    
+          }
+    
+      }
+      })
+      .on('end', function () {
+      //console.log('No more rows!');
+      });
+    
+      }
+  }
 
 
 
