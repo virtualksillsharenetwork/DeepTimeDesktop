@@ -290,6 +290,16 @@ await fetch('https://deeptime-digital.com/api/user/organizations/enabled/get',ge
               });
               
         }
+
+        if (Fs.existsSync('C:/Users/Public/LastCapture.jpg')) {
+
+          Fs.unlink('C:/Users/Public/LastCapture.jpg', (err) => {
+            if (err) throw err;
+            //ipc.send('gotoLogin');
+  
+          });
+          
+      }
         
         const computerName = os.userInfo();
         //console.log(computerName.username);

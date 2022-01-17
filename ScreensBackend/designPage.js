@@ -263,7 +263,13 @@ function timeCorrectUI(){
                                   var hour = $("#hours_per_week").text();
                                   var hourss = parseInt(hour);
                                   hourss = hourss + parseInt(json[0].lastWeek_minute[0].minutes / 60);
-                                  $("#hours_per_week").html(pad(hourss));
+                                  if(hourss > 0){
+                                    $("#hours_per_week").html(pad(hourss));
+                                  }
+                                  else{
+                                    $("#hours_per_week").html('00');
+                                  }
+                                  
                                   var mins = parseFloat(json[0].lastWeek_minute[0].minutes % 60);
                                   //var mins = mins.split(".");
                                   try{

@@ -61,7 +61,7 @@ const getLoginInformation = async() => {
             console.log(json);
             if(json === 'failed'){
                 $("#response").show();
-                $("#response").html('Error while fetching. Please try again');
+                $("#response").html('Error while fetching. Please Contact to Admin');
             }
             else{
                 $("#response").show();

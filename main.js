@@ -31,9 +31,9 @@ app.whenReady().then(() => {
 
 
   mainwindow = new BrowserWindow({ 
-    width: 700,//330
+    width: 330,//330
     height: 600,//660 
-    resizable: true,
+    resizable: false,
     fullscreen: false,
     maximizable: false,
     center:true,
@@ -43,7 +43,7 @@ app.whenReady().then(() => {
       contextIsolation: false
       }
   });
-  //mainwindow.setMenu(null);
+  mainwindow.setMenu(null);
   createWindow();
   
 
@@ -73,7 +73,7 @@ const createWindow = () => {
 
   mainwindow.setMenuBarVisibility(false)
   mainwindow.loadFile('Screens/login.html')
-  mainwindow.webContents.openDevTools();
+  //mainwindow.webContents.openDevTools();
   }
 
 
