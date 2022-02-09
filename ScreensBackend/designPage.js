@@ -6,13 +6,7 @@ var FormData = require('form-data');
 const Fs = require('fs');
 const csv = require('csv-parser');
 var CryptoJS = require('crypto-js');
-const checkInternetConnected = require('check-internet-connected');
-const config = {
-  timeout: 5000, //timeout connecting to each server, each try
-  retries: 5,//number of retries to do before failing
-  domain: 'https://www.google.com/',//the domain to check DNS record of
-}
-checkInternetConnected(config);
+
 
 let mouse_clicks_detection;
 var isPaused = false;
@@ -24,7 +18,9 @@ let minnn=0;
 let hourrr=0;
 let ten_min = 0;
 let change_cache = 1;
-
+var keyboard_upload = false;
+var mouse_upload = false;
+var ss_upload = false;
 
 
 
@@ -326,12 +322,12 @@ function pad(val) {
   function online(){
 
 
-    require('dns').resolve('www.google.com', function(err) {
-      if (err) {
+    // require('dns').resolve('www.google.com', function(err) {
+    //   if (err) {
         
-         alert("Check Internet Connection and Try Again.");
+    //      alert("Check Internet Connection and Try Again.");
 
-      } else {
+    //   } else {
 
 
 
@@ -355,8 +351,8 @@ function pad(val) {
       togBtn.checked = false;
       }
 
-    }
-    });
+    // }
+    // });
 
   }
 
@@ -395,6 +391,9 @@ function backtoselection(){
 
 function Call_Me_After_Every_Minute(){ 
 
+  if(!isPaused){
+  setTheTime();
+  }
 
 
   /* ****************************************************change cache of image************************************************************* */
@@ -459,8 +458,10 @@ if(isPaused) {
         inputStream
         .pipe(csv())
         .on('data', function (row2) {
-
-          
+          var hourss = '0';
+          if(decrypt(row2.hour,'nyshu55055') != null || decrypt(row2.hour,'nyshu55055') != '' || decrypt(row2.hour,'nyshu55055') !== NaN){
+              hourss = parseInt(decrypt(row2.hour,'nyshu55055').toString());
+          }
           var minutes = decrypt(row2.minute,'nyshu55055');
           let add_minutes = parseInt(minutes)+1;
           let monthh = parseInt(d.getMonth())+1;
@@ -487,13 +488,13 @@ if(isPaused) {
              day: d.getDate(), 
              month: monthh, 
              year: d.getFullYear(), 
-             hour: encrypt('0','nyshu55055'), 
+             hour: encrypt(hourss.toString(),'nyshu55055'), 
              minute: encrypt(add_minutes.toString(),'nyshu55055'), 
              memo: memoo, 
              date: pad(d.getFullYear())+"-"+pad(monthh)+"-"+pad(d.getDate())
             }
         ];
-         
+         console.log(hourss);
         csvWriter.writeRecords(records)       // returns a promise
             .then(() => {
                // console.log('...minute update Done');
@@ -689,6 +690,7 @@ if(isPaused) {
 /* ****************************************************upload image data to server********************************************************* */
 
 if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
+
   
   const CsvReadableStream = require('csv-reader');
 
@@ -724,7 +726,8 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
           .pipe(csv())
           .on('data', function (row2) {
     
-    
+            if(row2.id != ''){
+            
             var form = new FormData();
               var dfd = new Date();
               let monthh = parseInt(dfd.getMonth())+1;
@@ -745,18 +748,10 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
                             Fs.unlink(filepath, (err) => {
                                 if (err) {
                                   console.error("SS deleting Error:"+err);
-                                return;
+                                  //return;
                                 }
-                              //console.log("SS deleted");
-                              if (Fs.existsSync('C:/Users/Public/screenshoots.csv')) {
-                                Fs.unlink('C:/Users/Public/screenshoots.csv', (err) => {
-                                if (err) {
-                                  console.error("SS File deleting Error:"+err);
-                                return;
-                                }
-                                //console.log("SS csv deleted");
-                                });
-                                }
+                                ss_upload = true;
+                                
                             });
                             }
     
@@ -765,14 +760,32 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
                     if(err){
                      // console.log("SS uploading Error:"+err);
                      console.error(err);
+                        
                       }
                       
                     });
-    
+                  }
     
           })
           .on('end', function () {
           //console.log('No more rows!');
+
+
+          const checkInternetConnected = require('check-internet-connected');
+          const config = {
+            timeout: 3000, //timeout connecting to each server, each try
+            retries: 2,//number of retries to do before failing
+            domain: 'https://www.google.com/',//the domain to check DNS record of
+          }
+          checkInternetConnected(config);
+              checkInternetConnected()
+                .then((result) => {
+                  Fs.unlink('C:/Users/Public/screenshoots.csv', (err) => {
+                    if (err) throw err;
+                    ss_upload = false;
+                  });
+                });
+
           });
         
           }
@@ -797,10 +810,11 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
 /* ****************************************************upload keyboard data to server*********************************************** */
 
-if(ten_min == 10){
+//if(ten_min == 10){
 
 
 if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
+
 
   const CsvReadableStream = require('csv-reader');
 
@@ -819,12 +833,15 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
     if (Fs.existsSync('C:/Users/Public/keyboardpress.csv')) {
 
       const CsvReadableStream = require('csv-reader');
-    
       let inputStream = Fs.createReadStream('C:/Users/Public/keyboardpress.csv', 'utf8');
     
       inputStream
       .pipe(csv())
       .on('data', function (row2) {
+
+        if(row2.id != ''){
+
+
         var dd = new Date();
         var timee = pad(dd.getHours())+":"+pad(dd.getMinutes());
         var tts=[{
@@ -832,7 +849,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
           "pro_id":decrypt(row2.pro_id,"nyshu55055"),
           "clicks":decrypt(row2.clicks,"nyshu55055"),
           "date":decrypt(row2.date,"nyshu55055"),
-          "time":timee
+          "time":decrypt(row2.time,"nyshu55055")
         }];
 
         const getUserDataOptions = {
@@ -850,14 +867,28 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
           if (res.ok) {
           res.json().then(json => {
             
-          if(json == 'success'){
-            console.log('keyboard data upload success');
-            Fs.unlink('C:/Users/Public/keyboardpress.csv', (err) => {
-              if (err) throw err;
-              console.log('keyboard csv deleted');
-            });
-            
-          }
+            if(json == 'success'){
+              console.log('keyboard data upload success');
+              keyboard_upload = true;
+              // var idToSearchFor = parseInt(row2.id);
+              // Fs.readFile('C:/Users/Public/keyboardpress.csv','utf8', function(err, data)
+              // {
+                
+              //   if (err)
+              //   {
+              //     console.log(err);
+              //   }
+                
+              //   let alldata = data.toString().split('\n');
+              //   let linesArr =  alldata.map(line=>line.split(','));
+              //   let output = linesArr.filter(line=>parseInt(line[0]) !== idToSearchFor).join("\n");
+              //   Fs.writeFileSync('C:/Users/Public/keyboardpress.csv', output);
+              // });
+
+
+
+
+            }
 
           });
           }
@@ -866,73 +897,38 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
           // error callback
           console.error(error);
           });
-
-
-
-      })
-      .on('end', function () {
-      //console.log('No more rows!');
-      });
-    
-      }
-      else{
-        //not exist
-      const CsvReadableStream = require('csv-reader');
-    
-      let inputStream = Fs.createReadStream('C:/Users/Public/selectedorgpro.csv', 'utf8');
-    
-      inputStream
-      .pipe(csv())
-      .on('data', function (row2) {
-        var dd = new Date();
-        var timee = pad(dd.getHours())+":"+pad(dd.getMinutes());
-        var mnth = dd.getMonth()+1;
-        var datee = dd.getFullYear()+"-"+pad(mnth)+"-"+pad(dd.getDate());
-        var tts=[{
-          "org_id": decrypt(row2.org_id,"nyshu55055"),
-          "pro_id":decrypt(row2.pro_id,"nyshu55055"),
-          "clicks":"0",
-          "date":datee,
-          "time":timee
-        }];
-
-        const getUserDataOptions = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-          email: row1.email,
-          keybboardactivites: JSON.stringify(tts)
-          })
-          };
-
-
-          fetch('https://deeptime-digital.com/api/user/keyboard/activits/send',getUserDataOptions)
-          .then(res => {
-          if (res.ok) {
-          res.json().then(json => {
-          
-          if(json == 'success'){
-            //Fs.unlink('C:/Users/Public/keyboardpress.csv', (err) => {
-              //if (err) throw err;
-            console.log('keyboard data upload success');
-            //});
-            
-          }
-
-          });
-          }
-          })
-          .catch((error) => {
-          // error callback
-          console.error(error);
-          });
-
+        
+        }
 
 
       })
       .on('end', function () {
       //console.log('No more rows!');
+
+      const checkInternetConnected = require('check-internet-connected');
+          const config = {
+            timeout: 3000, //timeout connecting to each server, each try
+            retries: 2,//number of retries to do before failing
+            domain: 'https://www.google.com/',//the domain to check DNS record of
+          }
+          checkInternetConnected(config);
+              checkInternetConnected()
+                .then((result) => {
+                  Fs.unlink('C:/Users/Public/keyboardpress.csv', (err) => {
+                    if (err) throw err;
+                    keyboard_upload = false;
+                  });
+                });
+
+
+
+
+
+
+
+
       });
+    
       }
   }
   })
@@ -962,6 +958,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
     if (Fs.existsSync('C:/Users/Public/mouseclicks.csv')) {
 
+
       const CsvReadableStream = require('csv-reader');
     
       let inputStream = Fs.createReadStream('C:/Users/Public/mouseclicks.csv', 'utf8');
@@ -969,6 +966,8 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
       inputStream
       .pipe(csv())
       .on('data', function (row2) {
+
+        if(row2.id != ''){
         var dd = new Date();
         var timee = pad(dd.getHours())+":"+pad(dd.getMinutes());
         var tts=[{
@@ -976,7 +975,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
           "pro_id":decrypt(row2.pro_id,"nyshu55055"),
           "clicks":decrypt(row2.clicks,"nyshu55055"),
           "date":decrypt(row2.date,"nyshu55055"),
-          "time":timee
+          "time":decrypt(row2.time,"nyshu55055")
         }];
 
         const getUserDataOptions = {
@@ -996,12 +995,14 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
           
           if(json == 'success'){
             console.log('mouse data upload success');
-             Fs.unlink('C:/Users/Public/mouseclicks.csv', (err) => {
-              if (err) throw err;
-            console.log('mouse csv deleted success');
-            });
-            
+            mouse_upload = true;
+
+
+
           }
+
+
+
           });
           }
           })
@@ -1010,71 +1011,37 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
           console.error(error);
           });
 
-
-
-      })
-      .on('end', function () {
-      //console.log('No more rows!');
-      });
-    
-      }
-      else{
-        //not exist
-      const CsvReadableStream = require('csv-reader');
-    
-      let inputStream = Fs.createReadStream('C:/Users/Public/selectedorgpro.csv', 'utf8');
-    
-      inputStream
-      .pipe(csv())
-      .on('data', function (row2) {
-        var dd = new Date();
-        var timee = pad(dd.getHours())+":"+pad(dd.getMinutes());
-        var mnth = dd.getMonth()+1;
-        var datee = dd.getFullYear()+"-"+pad(mnth)+"-"+pad(dd.getDate());
-        var tts=[{
-          "org_id": decrypt(row2.org_id,"nyshu55055"),
-          "pro_id":decrypt(row2.pro_id,"nyshu55055"),
-          "clicks":"0",
-          "date":datee,
-          "time":timee
-        }];
-
-        const getUserDataOptions = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-          email: row1.email,
-          keybboardactivites: JSON.stringify(tts)
-          })
-          };
-
-
-          fetch('https://deeptime-digital.com/api/user/mouse/activits/send',getUserDataOptions)
-          .then(res => {
-          if (res.ok) {
-          res.json().then(json => {
-          
-          if(json == 'success'){
-             //Fs.unlink('C:/Users/Public/mouseclicks.csv', (err) => {
-              //if (err) throw err;
-            console.log('mouse data upload success');
-            //});
-            
-          }
-          });
-          }
-          })
-          .catch((error) => {
-          // error callback
-          console.error(error);
-          });
+                    
+        }
 
 
 
       })
       .on('end', function () {
       //console.log('No more rows!');
+
+
+      const checkInternetConnected = require('check-internet-connected');
+          const config = {
+            timeout: 3000, //timeout connecting to each server, each try
+            retries: 2,//number of retries to do before failing
+            domain: 'https://www.google.com/',//the domain to check DNS record of
+          }
+          checkInternetConnected(config);
+              checkInternetConnected()
+                .then((result) => {
+                  Fs.unlink('C:/Users/Public/mouseclicks.csv', (err) => {
+                    if (err) throw err;
+                    mouse_upload = false;
+                  });
+                });
+
+
+
+
+
       });
+    
       }
   }
   })
@@ -1084,8 +1051,8 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
   }
 
-ten_min = 0;
-}
+//ten_min = 0;
+//}
 
 /* ****************************************************upload time function*********************************************** */
 
@@ -1110,6 +1077,13 @@ ten_min = 0;
 
 /* ****************************************************check internet function************************************************************* */
 function InternetConnection () {
+  const checkInternetConnected = require('check-internet-connected');
+const config = {
+  timeout: 5000, //timeout connecting to each server, each try
+  retries: 5,//number of retries to do before failing
+  domain: 'https://www.google.com/',//the domain to check DNS record of
+}
+checkInternetConnected(config);
     checkInternetConnected()
       .then((result) => {
         console.log(result);
@@ -1242,10 +1216,10 @@ function InternetConnection () {
               }
               else if(json == 'failed'){
                 console.log('failed');
-                setTheTime();
+                //setTheTime();
               }
               else{
-                setTheTime();
+                //setTheTime();
               }
     
               });
@@ -1253,13 +1227,13 @@ function InternetConnection () {
               }
               else{
                 console.log('not ok');
-                setTheTime();
+                //setTheTime();
               }
               })
               .catch((error) => {
               // error callback
               //console.error(error);
-                setTheTime();
+                //setTheTime();
               });
         
           }
@@ -1323,25 +1297,25 @@ function InternetConnection () {
                 }
                 else if(json == 'failed'){
                   console.log('failed');
-                  setTheTime();
+                  //setTheTime();
                 }
                 else{
                   //console.log('not upload');
-                  setTheTime();
+                  //setTheTime();
                 }
       
                 });
                 }
                 else{
                   console.log('not ok');
-                  setTheTime();
+                  //setTheTime();
                 }
                 //console.log(res);
                 })
                 .catch((error) => {
                 // error callback
                 //console.error(error);
-                setTheTime();
+                //setTheTime();
                 });
               
     
