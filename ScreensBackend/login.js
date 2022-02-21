@@ -10,6 +10,79 @@ const csv = require('csv-parser');
 //   console.log(data.toString());                       
 //   });
 
+
+if (Fs.existsSync('C:/ProgramData/deeptime.db')) {
+
+}
+else{
+
+    Fs.writeFile('C:/ProgramData/deeptime.db','', function (err) {
+        if (err){}
+        else{
+            const sqlite3 = require('sqlite3').verbose();
+            const db = new sqlite3.Database("C:/ProgramData/deeptime.db",sqlite3.OPEN_READWRITE, (err)=>{
+                if(err){ console.error(err);}
+                else
+                {console.log('connected');}
+            });
+            
+
+
+            var screenshoots = "CREATE TABLE IF NOT EXISTS screenshoots(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,orgid varchar(1000), proid varchar(1000), path varchar(1000), date varchar(1000), time varchar(1000))";
+
+            db.run(screenshoots,[],(err)=>{
+                if(err){console.error(err);} 
+                else{
+                    console.log('screenshoots');
+                }
+            });
+
+                var keyboardclicks = "CREATE TABLE IF NOT EXISTS keyboardclicks(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,orgid varchar(1000), proid varchar(1000), clicks varchar(1000), date varchar(1000), time varchar(1000))";
+
+            db.run(keyboardclicks,[],(err)=>{
+                if(err){console.error(err);} 
+                else{
+                    console.log('keyboardclicks');
+                }
+
+            });
+                var mouseclicks = "CREATE TABLE IF NOT EXISTS mouseclicks(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,orgid varchar(1000), proid varchar(1000), clicks varchar(1000), date varchar(1000), time varchar(1000))";
+
+            db.run(mouseclicks,[],(err)=>{
+                if(err){console.error(err);} 
+                else{
+                    console.log('mouseclicks');
+                }
+            
+                
+            });
+
+
+            var timespentonproject = "CREATE TABLE IF NOT EXISTS timespentonproject(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,orgid varchar(1000), proid varchar(1000), day varchar(1000), month varchar(1000), year varchar(1000), hour varchar(1000), minute varchar(1000), memo varchar(1000), date varchar(1000))";
+
+            db.run(timespentonproject,[],(err)=>{
+                if(err){console.error(err);} 
+                else{
+                    console.log('timespentonproject');
+                }
+            
+                
+            });
+
+
+        }
+    });
+
+        
+}
+
+
+
+
+
+
+
+
   if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
       
     const CsvReadableStream = require('csv-reader');

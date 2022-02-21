@@ -31,9 +31,10 @@ app.whenReady().then(() => {
 
 
   mainwindow = new BrowserWindow({ 
+    icon: __dirname +'/deepico.png',
     width: 330,//330
-    height: 600,//660 
-    resizable: true,
+    height: 600,//600 
+    resizable: false,
     fullscreen: false,
     maximizable: false,
     center:true,
@@ -73,7 +74,7 @@ const createWindow = () => {
 
   mainwindow.setMenuBarVisibility(false)
   mainwindow.loadFile('Screens/login.html')
-  mainwindow.webContents.openDevTools();
+  //mainwindow.webContents.openDevTools();
   }
 
 

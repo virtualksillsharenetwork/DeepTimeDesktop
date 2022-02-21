@@ -18,11 +18,13 @@ let minnn=0;
 let hourrr=0;
 let ten_min = 0;
 let change_cache = 1;
-var keyboard_upload = false;
-var mouse_upload = false;
-var ss_upload = false;
 
-
+const sqlite3 = require('sqlite3').verbose();
+            const db = new sqlite3.Database("C:/ProgramData/deeptime.db",sqlite3.OPEN_READWRITE, (err)=>{
+                if(err){ console.error(err);}
+                else
+                {console.log('connected');}
+            });
 
 
 TimeStop();
@@ -391,9 +393,10 @@ function backtoselection(){
 
 function Call_Me_After_Every_Minute(){ 
 
-  if(!isPaused){
-  setTheTime();
-  }
+  
+  
+ 
+  
 
 
   /* ****************************************************change cache of image************************************************************* */
@@ -429,11 +432,12 @@ function Call_Me_After_Every_Minute(){
     }
     //minsLabel.innerHTML = pad(totalSeconds % 60);
     }
-    //timeCorrectUI();
+    timeCorrectUI();
 
 /* ****************************************************update minutes************************************************************* */
 
 if(isPaused) {
+  updateHours_minutes++;
   if(updateHours_minutes != 60){
 
   if (Fs.existsSync('C:/Users/Public/selectedorgpro.csv')) {
@@ -448,105 +452,47 @@ if(isPaused) {
 
     //console.log('A row arrived: ', row1.email);
     if(row1.org_id != "" && row1.pro_id != "" && row1.date != ""){
-      
-      if (Fs.existsSync('C:/Users/Public/totaltimeonproject.csv')) {
-      
-        const CsvReadableStream = require('csv-reader');
 
-        let inputStream = Fs.createReadStream('C:/Users/Public/totaltimeonproject.csv', 'utf8');
+      var dat = new Date();
+        let monthh = parseInt(dat.getMonth())+1;
+        var updateMinute = "SELECT * FROM timespentonproject WHERE day=? and month=? and year=?";
 
-        inputStream
-        .pipe(csv())
-        .on('data', function (row2) {
-          var hourss = '0';
-          if(decrypt(row2.hour,'nyshu55055') != null || decrypt(row2.hour,'nyshu55055') != '' || decrypt(row2.hour,'nyshu55055') !== NaN){
-              hourss = parseInt(decrypt(row2.hour,'nyshu55055').toString());
-          }
-          var minutes = decrypt(row2.minute,'nyshu55055');
-          let add_minutes = parseInt(minutes)+1;
-          let monthh = parseInt(d.getMonth())+1;
-
-          const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-          const csvWriter = createCsvWriter({
-            path: 'C:/Users/Public/totaltimeonproject.csv',
-            header: [
-                {id: 'org_id', title: 'org_id'},
-                {id: 'pro_id', title: 'pro_id'},
-                {id: 'day', title: 'day'},
-                {id: 'month', title: 'month'},
-                {id: 'year', title: 'year'},
-                {id: 'hour', title: 'hour'},
-                {id: 'minute', title: 'minute'},
-                {id: 'memo', title: 'memo'},
-                {id: 'date', title: 'date'}
-            ]
-        });
-        
-        const records = [
-            {org_id: row1.org_id,
-             pro_id: row1.pro_id, 
-             day: d.getDate(), 
-             month: monthh, 
-             year: d.getFullYear(), 
-             hour: encrypt(hourss.toString(),'nyshu55055'), 
-             minute: encrypt(add_minutes.toString(),'nyshu55055'), 
-             memo: memoo, 
-             date: pad(d.getFullYear())+"-"+pad(monthh)+"-"+pad(d.getDate())
-            }
-        ];
-         console.log(hourss);
-        csvWriter.writeRecords(records)       // returns a promise
-            .then(() => {
-               // console.log('...minute update Done');
-               setTheTime();
-            });     
-          
-        })
-        .on('end', function () {
-        //console.log('No more rows!');
-        });
-      
-      
-      }
-      else{
-
-        let monthh = parseInt(d.getMonth())+1;
-        const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-        const csvWriter = createCsvWriter({
-            path: 'C:/Users/Public/totaltimeonproject.csv',
-            header: [
-                {id: 'org_id', title: 'org_id'},
-                {id: 'pro_id', title: 'pro_id'},
-                {id: 'day', title: 'day'},
-                {id: 'month', title: 'month'},
-                {id: 'year', title: 'year'},
-                {id: 'hour', title: 'hour'},
-                {id: 'minute', title: 'minute'},
-                {id: 'memo', title: 'memo'},
-                {id: 'date', title: 'date'}
-            ]
-        });
-        
-        const records = [
-            {org_id: row1.org_id,
-             pro_id: row1.pro_id, 
-             day: d.getDate(), 
-             month: monthh, 
-             year: d.getFullYear(), 
-             hour: encrypt('0','nyshu55055'), 
-             minute: encrypt('1','nyshu55055'), 
-             memo: memoo, 
-             date: pad(d.getFullYear())+"-"+pad(monthh)+"-"+pad(d.getDate())
-            }
-        ];
-         
-        csvWriter.writeRecords(records)       // returns a promise
-            .then(() => {
-               // console.log('...minute create Done');
-               setTheTime();
+        db.all(updateMinute,[pad(dat.getDate()),monthh,dat.getFullYear()],(err,rows)=>{
+            if(err) console.log(err);
+            //console.log(rows);
+            if(rows.length>0){
+            rows.forEach(row => {
+              var datt = new Date();
+              var updateMinute2 = "UPDATE timespentonproject SET minute=? WHERE day=? and month=? and year=?";
+               var mint = parseInt(decrypt(row.minute.toString(),"nyshu55055"))+1;
+              db.run(updateMinute2,[encrypt(mint.toString(),"nyshu55055"),pad(datt.getDate()),monthh,datt.getFullYear()],(err)=>{
+                if(err){ console.log(err);}
+                else{
+                  console.log('minute update');
+                  setTime();
+                }
             });
+          
+            });
+          }
+          else{
 
-      }
+             var dat = new Date();
+             let monthh = parseInt(dat.getMonth())+1;
+
+            var createMinute = "INSERT INTO timespentonproject (orgid, proid, day,month,year,hour,minute,memo,date) VALUES (?,?,?,?,?,?,?,?,?)";
+              db.run(createMinute,[row1.org_id,row1.pro_id,dat.getDate(),monthh,d.getFullYear(),encrypt('0','nyshu55055'),encrypt('1','nyshu55055'),memoo,pad(dat.getFullYear())+"-"+pad(monthh)+"-"+pad(dat.getDate())],(err)=>{
+                if(err){ console.log(err);}
+                else{
+                  console.log('minute created');
+                  setTime();
+                }
+
+            });
+          }
+
+        });
+
     }
     })
     .on('end', function () {
@@ -561,9 +507,8 @@ if(isPaused) {
   
 /* ****************************************************update hours************************************************************* */
 
-  if(isPaused) { 
-    updateHours_minutes++;
-    if(updateHours_minutes == 60){
+  if(isPaused) {
+    if(updateHours_minutes ==60){
 
       if (Fs.existsSync('C:/Users/Public/selectedorgpro.csv')) {
 
@@ -577,100 +522,46 @@ if(isPaused) {
     
         //console.log('A row arrived: ', row1.email);
         if(row1.org_id != "" && row1.pro_id != "" && row1.date != ""){
-          
-          if (Fs.existsSync('C:/Users/Public/totaltimeonproject.csv')) {
-          
-            const CsvReadableStream = require('csv-reader');
-    
-            let inputStream = Fs.createReadStream('C:/Users/Public/totaltimeonproject.csv', 'utf8');
-    
-            inputStream
-            .pipe(csv())
-            .on('data', function (row1) {
 
-              var hours = decrypt(row1.hour,'nyshu55055');
-              let add_hours = parseInt(hours)+1;
-              let monthh = parseInt(d.getMonth())+1;
-              const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-            const csvWriter = createCsvWriter({
-                path: 'C:/Users/Public/totaltimeonproject.csv',
-                header: [
-                    {id: 'org_id', title: 'org_id'},
-                    {id: 'pro_id', title: 'pro_id'},
-                    {id: 'day', title: 'day'},
-                    {id: 'month', title: 'month'},
-                    {id: 'year', title: 'year'},
-                    {id: 'hour', title: 'hour'},
-                    {id: 'minute', title: 'minute'},
-                    {id: 'memo', title: 'memo'},
-                    {id: 'date', title: 'date'}
-                ]
-            });
+          var dat = new Date();
+          let monthh = parseInt(dat.getMonth())+1;
+          var updateHour = "SELECT * FROM timespentonproject WHERE day=? and month=? and year=?";
+  
+          db.all(updateHour,[pad(dat.getDate()),monthh,dat.getFullYear()],(err,rows)=>{
+              if(err) console.log(err);
+              console.log(rows);
+              if(rows.length>0){
+              rows.forEach(row => {
+                var datt = new Date();
+                var updateMinute2 = "UPDATE timespentonproject SET hour=?, minute=? WHERE day=? and month=? and year=?";
+                 var hourr = parseInt(decrypt(row.hour.toString(),"nyshu55055"))+1;
+                db.run(updateMinute2,[encrypt(hourr.toString(),"nyshu55055"),encrypt('0',"nyshu55055"),pad(datt.getDate()),monthh,datt.getFullYear()],(err)=>{
+                  if(err){ console.log(err);}
+                  else{
+                    console.log('hour update');
+                    setTime();
+                  }
+              });
             
-            const records = [
-                {org_id: row1.org_id,
-                 pro_id: row1.pro_id, 
-                 day: d.getDate(), 
-                 month: monthh, 
-                 year: d.getFullYear(), 
-                 hour: encrypt(add_hours.toString(),'nyshu55055'), 
-                 minute: encrypt('0','nyshu55055'), 
-                 memo: memoo, 
-                 date: pad(d.getFullYear())+"-"+pad(monthh)+"-"+pad(d.getDate())
-                }
-            ];
-             
-            csvWriter.writeRecords(records)       // returns a promise
-                .then(() => {
-                    //console.log('...hour update Done');
-                    setTheTime();
-                });     
-              
-            })
-            .on('end', function () {
-            //console.log('No more rows!');
-            });
-          
-          
-          }
-          else{
-            let monthh = parseInt(d.getMonth())+1;
-            const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-            const csvWriter = createCsvWriter({
-                path: 'C:/Users/Public/totaltimeonproject.csv',
-                header: [
-                    {id: 'org_id', title: 'org_id'},
-                    {id: 'pro_id', title: 'pro_id'},
-                    {id: 'day', title: 'day'},
-                    {id: 'month', title: 'month'},
-                    {id: 'year', title: 'year'},
-                    {id: 'hour', title: 'hour'},
-                    {id: 'minute', title: 'minute'},
-                    {id: 'memo', title: 'memo'},
-                    {id: 'date', title: 'date'}
-                ]
-            });
-            
-            const records = [
-                {org_id: row1.org_id,
-                 pro_id: row1.pro_id, 
-                 day: d.getDate(), 
-                 month: monthh, 
-                 year: d.getFullYear(), 
-                 hour: encrypt('1','nyshu55055'), 
-                 minute: encrypt('0','nyshu55055'), 
-                 memo: memoo, 
-                 date: pad(d.getFullYear())+"-"+pad(monthh)+"-"+pad(d.getDate())
-                }
-            ];
-             
-            csvWriter.writeRecords(records)       // returns a promise
-                .then(() => {
-                    //console.log('...hour create Done');
-                    setTheTime();
-                });
-    
-          }
+              });
+            }
+            else{
+  
+              var datt = new Date();
+               let monthh = parseInt(datt.getMonth())+1;
+  
+              var createMinute = "INSERT INTO timespentonproject (orgid, proid, day,month,year,hour,minute,memo,date) VALUES (?,?,?,?,?,?,?,?,?)";
+                db.run(createMinute,[row1.org_id,row1.pro_id,datt.getDate(),monthh,datt.getFullYear(),encrypt('1','nyshu55055'),encrypt('0','nyshu55055'),memoo,pad(datt.getFullYear())+"-"+pad(monthh)+"-"+pad(datt.getDate())],(err)=>{
+                  if(err){ console.log(err);}
+                  else{
+                    console.log('hour created');
+                    setTime();
+                  }
+  
+              });
+            }
+  
+          });
         }
         })
         .on('end', function () {
@@ -714,84 +605,59 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
       .pipe(csv())
       .on('data', function (roww) {
 
+              var sql = "Select * from screenshoots";
 
+              db.all(sql,[],(err,rows)=>{
+                  if(err) console.log(err);
 
-        if (Fs.existsSync('C:/Users/Public/screenshoots.csv')) {
-
-          const CsvReadableStream = require('csv-reader');
-        
-          let inputStream = Fs.createReadStream('C:/Users/Public/screenshoots.csv', 'utf8');
-        
-          inputStream
-          .pipe(csv())
-          .on('data', function (row2) {
-    
-            if(row2.id != ''){
-            
-            var form = new FormData();
-              var dfd = new Date();
-              let monthh = parseInt(dfd.getMonth())+1;
-              var timee = dfd.getFullYear()+"-"+pad(monthh)+"-"+pad(dfd.getDate());
-                    const ScreenCaptures = row2.path.split("|");
-                    form.append('email', row1.email);
-                    form.append('datee', timee);
-                    form.append('org_id',decrypt(roww.org_id,"nyshu55055"));
-                    form.append('pro_id',decrypt(roww.pro_id,"nyshu55055"));
-                    form.append('file1', Fs.createReadStream('C:\\Users\\'+ScreenCaptures[0]+'\\Documents\\ActiveScreens\\'+ScreenCaptures[1]));
-                    form.submit('https://deeptime-digital.com/api/upload/data/user-from/desktop', function(err, res) {
+                  rows.forEach(row => {
                     
-                    if(res.statusCode == 200){
-                    //console.log('success');
-                            var filepath = 'C:\\Users\\'+ScreenCaptures[0]+'\\Documents\\ActiveScreens\\'+ScreenCaptures[1];
-    
-                            if (Fs.existsSync(filepath)) {
-                            Fs.unlink(filepath, (err) => {
-                                if (err) {
-                                  console.error("SS deleting Error:"+err);
-                                  //return;
-                                }
-                                ss_upload = true;
-                                
+            var form = new FormData();
+            var dfd = new Date();
+            let monthh = parseInt(dfd.getMonth())+1;
+                  const ScreenCaptures = row.path.toString().split("|");
+                  form.append('email', row1.email);
+                  form.append('datee', decrypt(row.date.toString(),"nyshu55055"));
+                  form.append('time', decrypt(row.time.toString(),"nyshu55055"));
+                  form.append('org_id',decrypt(row.orgid.toString(),"nyshu55055"));
+                  form.append('pro_id',decrypt(row.proid.toString(),"nyshu55055"));
+                  form.append('file1', Fs.createReadStream('C:\\Users\\'+ScreenCaptures[0]+'\\Documents\\ActiveScreens\\'+ScreenCaptures[1]));
+                  form.submit('https://deeptime-digital.com/api/upload/data/user-from/desktop', function(err, res) {
+                  
+                  if(res.statusCode == 200){
+                  //console.log('success');
+                          var filepath = 'C:\\Users\\'+ScreenCaptures[0]+'\\Documents\\ActiveScreens\\'+ScreenCaptures[1];
+  
+                          if (Fs.existsSync(filepath)) {
+                          Fs.unlink(filepath, (err) => {
+                              if (err) {
+                                console.error("SS deleting Error:"+err);
+                                //return;
+                              }
+                          });
+                          }
+
+                          var sql = "DELETE FROM screenshoots WHERE id=?";
+
+                            db.run(sql,[row.id],(err)=>{
+                                if(err) console.log(err);
+
+                                console.log('SS row Deleted');
                             });
-                            }
-    
-                           // console.log('SS upload success');
-                    }
-                    if(err){
-                     // console.log("SS uploading Error:"+err);
-                     console.error(err);
-                        
-                      }
-                      
-                    });
+  
+                         // console.log('SS upload success');
                   }
-    
-          })
-          .on('end', function () {
-          //console.log('No more rows!');
-
-
-          const checkInternetConnected = require('check-internet-connected');
-          const config = {
-            timeout: 3000, //timeout connecting to each server, each try
-            retries: 2,//number of retries to do before failing
-            domain: 'https://www.google.com/',//the domain to check DNS record of
-          }
-          checkInternetConnected(config);
-              checkInternetConnected()
-                .then((result) => {
-                  Fs.unlink('C:/Users/Public/screenshoots.csv', (err) => {
-                    if (err) throw err;
-                    ss_upload = false;
+                  if(err){
+                   // console.log("SS uploading Error:"+err);
+                   console.error(err);
+                      
+                    }
+                    
                   });
-                });
-
-          });
-        
-          }
 
 
-
+                  });
+              });
       
         
       })
@@ -827,109 +693,57 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
   //console.log('A row arrived: ', row1.email);
   if(row1.email != ""){
     
-    
+                var sql = "Select * from keyboardclicks";
+
+                db.all(sql,[],(err,rows)=>{
+                    if(err) console.log(err);
+
+                    rows.forEach(row => {
+                      var tts=[{
+                        "org_id": decrypt(row.orgid.toString(),"nyshu55055"),
+                        "pro_id":decrypt(row.proid.toString(),"nyshu55055"),
+                        "clicks":decrypt(row.clicks.toString(),"nyshu55055"),
+                        "date":decrypt(row.date.toString(),"nyshu55055"),
+                        "time":decrypt(row.time.toString(),"nyshu55055")
+                      }];
+                      const getUserDataOptions = {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                        email: row1.email,
+                        keybboardactivites: JSON.stringify(tts)
+                        })
+                        };
 
 
-    if (Fs.existsSync('C:/Users/Public/keyboardpress.csv')) {
+                        fetch('https://deeptime-digital.com/api/user/keyboard/activits/send',getUserDataOptions)
+                          .then(res => {
+                          if (res.ok) {
+                          res.json().then(json => {
+                            
+                            if(json == 'success'){
+                              console.log('keyboard data upload success');
+                              var sql = "DELETE FROM keyboardclicks WHERE id=?";
 
-      const CsvReadableStream = require('csv-reader');
-      let inputStream = Fs.createReadStream('C:/Users/Public/keyboardpress.csv', 'utf8');
-    
-      inputStream
-      .pipe(csv())
-      .on('data', function (row2) {
+                              db.run(sql,[row.id],(err)=>{
+                                  if(err) console.log(err);
+                                  console.log('keyboard row Deleted');
+                              });
+                            }
 
-        if(row2.id != ''){
+                          });
+                          }
+                          })
+                          .catch((error) => {
+                          // error callback
+                          console.error(error);
+                          });
 
+                      
 
-        var dd = new Date();
-        var timee = pad(dd.getHours())+":"+pad(dd.getMinutes());
-        var tts=[{
-          "org_id": decrypt(row2.org_id,"nyshu55055"),
-          "pro_id":decrypt(row2.pro_id,"nyshu55055"),
-          "clicks":decrypt(row2.clicks,"nyshu55055"),
-          "date":decrypt(row2.date,"nyshu55055"),
-          "time":decrypt(row2.time,"nyshu55055")
-        }];
-
-        const getUserDataOptions = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-          email: row1.email,
-          keybboardactivites: JSON.stringify(tts)
-          })
-          };
-
-
-          fetch('https://deeptime-digital.com/api/user/keyboard/activits/send',getUserDataOptions)
-          .then(res => {
-          if (res.ok) {
-          res.json().then(json => {
-            
-            if(json == 'success'){
-              console.log('keyboard data upload success');
-              keyboard_upload = true;
-              // var idToSearchFor = parseInt(row2.id);
-              // Fs.readFile('C:/Users/Public/keyboardpress.csv','utf8', function(err, data)
-              // {
-                
-              //   if (err)
-              //   {
-              //     console.log(err);
-              //   }
-                
-              //   let alldata = data.toString().split('\n');
-              //   let linesArr =  alldata.map(line=>line.split(','));
-              //   let output = linesArr.filter(line=>parseInt(line[0]) !== idToSearchFor).join("\n");
-              //   Fs.writeFileSync('C:/Users/Public/keyboardpress.csv', output);
-              // });
-
-
-
-
-            }
-
-          });
-          }
-          })
-          .catch((error) => {
-          // error callback
-          console.error(error);
-          });
-        
-        }
-
-
-      })
-      .on('end', function () {
-      //console.log('No more rows!');
-
-      const checkInternetConnected = require('check-internet-connected');
-          const config = {
-            timeout: 3000, //timeout connecting to each server, each try
-            retries: 2,//number of retries to do before failing
-            domain: 'https://www.google.com/',//the domain to check DNS record of
-          }
-          checkInternetConnected(config);
-              checkInternetConnected()
-                .then((result) => {
-                  Fs.unlink('C:/Users/Public/keyboardpress.csv', (err) => {
-                    if (err) throw err;
-                    keyboard_upload = false;
-                  });
+                    });
                 });
-
-
-
-
-
-
-
-
-      });
-    
-      }
+       
   }
   })
   .on('end', function () {
@@ -955,94 +769,58 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
     
     correctTheTime(row1.email);
 
+            var sql = "Select * from mouseclicks";
 
-    if (Fs.existsSync('C:/Users/Public/mouseclicks.csv')) {
+            db.all(sql,[],(err,rows)=>{
+                if(err) console.log(err);
 
+                rows.forEach(row => {
+                  
+                  var tts=[{
+                    "org_id": decrypt(row.orgid.toString(),"nyshu55055"),
+                    "pro_id":decrypt(row.proid.toString(),"nyshu55055"),
+                    "clicks":decrypt(row.clicks.toString(),"nyshu55055"),
+                    "date":decrypt(row.date.toString(),"nyshu55055"),
+                    "time":decrypt(row.time.toString(),"nyshu55055")
+                  }];
+                  const getUserDataOptions = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                    email: row1.email,
+                    keybboardactivites: JSON.stringify(tts)
+                    })
+                    };
 
-      const CsvReadableStream = require('csv-reader');
-    
-      let inputStream = Fs.createReadStream('C:/Users/Public/mouseclicks.csv', 'utf8');
-    
-      inputStream
-      .pipe(csv())
-      .on('data', function (row2) {
-
-        if(row2.id != ''){
-        var dd = new Date();
-        var timee = pad(dd.getHours())+":"+pad(dd.getMinutes());
-        var tts=[{
-          "org_id": decrypt(row2.org_id,"nyshu55055"),
-          "pro_id":decrypt(row2.pro_id,"nyshu55055"),
-          "clicks":decrypt(row2.clicks,"nyshu55055"),
-          "date":decrypt(row2.date,"nyshu55055"),
-          "time":decrypt(row2.time,"nyshu55055")
-        }];
-
-        const getUserDataOptions = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-          email: row1.email,
-          keybboardactivites: JSON.stringify(tts)
-          })
-          };
-
-
-          fetch('https://deeptime-digital.com/api/user/mouse/activits/send',getUserDataOptions)
-          .then(res => {
-          if (res.ok) {
-          res.json().then(json => {
-          
-          if(json == 'success'){
-            console.log('mouse data upload success');
-            mouse_upload = true;
-
-
-
-          }
-
-
-
-          });
-          }
-          })
-          .catch((error) => {
-          // error callback
-          console.error(error);
-          });
-
+                              
+                    fetch('https://deeptime-digital.com/api/user/mouse/activits/send',getUserDataOptions)
+                    .then(res => {
+                    if (res.ok) {
+                    res.json().then(json => {
                     
-        }
+                    if(json == 'success'){
+                      console.log('mouse data upload success');
+                      var sql = "DELETE FROM mouseclicks WHERE id=?";
+
+                      db.run(sql,[row.id],(err)=>{
+                          if(err) console.log(err);
+                          console.log('mouse row Deleted');
+                      });
+                    }
 
 
 
-      })
-      .on('end', function () {
-      //console.log('No more rows!');
+                    });
+                    }
+                    })
+                    .catch((error) => {
+                    // error callback
+                    console.error(error);
+                    });
 
 
-      const checkInternetConnected = require('check-internet-connected');
-          const config = {
-            timeout: 3000, //timeout connecting to each server, each try
-            retries: 2,//number of retries to do before failing
-            domain: 'https://www.google.com/',//the domain to check DNS record of
-          }
-          checkInternetConnected(config);
-              checkInternetConnected()
-                .then((result) => {
-                  Fs.unlink('C:/Users/Public/mouseclicks.csv', (err) => {
-                    if (err) throw err;
-                    mouse_upload = false;
-                  });
                 });
-
-
-
-
-
-      });
-    
-      }
+            });
   }
   })
   .on('end', function () {
@@ -1147,10 +925,7 @@ checkInternetConnected(config);
 
 
 
-
-
-
-  function setTheTime(){
+  function setTime(){
     if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
       const CsvReadableStream = require('csv-reader');
@@ -1164,178 +939,64 @@ checkInternetConnected(config);
       //console.log('A row arrived: ', row1.email);
       if(row1.email != ""){
         
-    
-    
-        if (Fs.existsSync('C:/Users/Public/totaltimeonproject.csv')) {
-    
-          const CsvReadableStream = require('csv-reader');
-        
-          let inputStream = Fs.createReadStream('C:/Users/Public/totaltimeonproject.csv', 'utf8');
-        
-          inputStream
-          .pipe(csv())
-          .on('data', function (row2) {
-        
-          //console.log('A row arrived from time file: '+row2);
-          if(row2.org_id != ""){
-            var tts=[{
-                        "org_id": decrypt(row2.org_id,"nyshu55055"),
-                        "pro_id": decrypt(row2.pro_id,"nyshu55055"),
-                        "day":row2.day,
-                        "month":row2.month,
-                        "year":row2.year,
-                        "hour":decrypt(row2.hour,"nyshu55055"),
-                        "minute":decrypt(row2.minute,"nyshu55055"),
-                        "memo":row2.memo,
-                        "date":row2.date,
-                      }];
-                      //console.log('A row arrived: ', tts);
-            const getUserDataOptions = {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ 
-              email: row1.email,
-              keybboardactivites: JSON.stringify(tts)
-              })
-              };
-    
-              fetch('https://deeptime-digital.com/api/user/time/spent/send',getUserDataOptions)
-              .then(res => {
-              if (res.ok) {
-              res.json().then(json => {
-              
-              if(json == 'success'){
-                console.log('success');
-                Fs.unlink('C:/Users/Public/totaltimeonproject.csv', (err) => {
-                  if (err) throw err;
-                  //console.log('time csv deleted success');
-                  //console.log(decrypt(row2.minute,"nyshu55055"));
-                });
-                
-    
-              }
-              else if(json == 'failed'){
-                console.log('failed');
-                //setTheTime();
-              }
-              else{
-                //setTheTime();
-              }
-    
-              });
-              //console.log(res);
-              }
-              else{
-                console.log('not ok');
-                //setTheTime();
-              }
-              })
-              .catch((error) => {
-              // error callback
-              //console.error(error);
-                //setTheTime();
-              });
-        
-          }
-          })
-          .on('end', function () {
-          //console.log('No more rows!');
-          });
-        
-          }
-          else{
-            //file not exist
-    
-            if(isPaused){
-              if(updateHours_minutes != 60){
-    
-            if (Fs.existsSync('C:/Users/Public/selectedorgpro.csv')) {
-    
-              const CsvReadableStream = require('csv-reader');
-          
-              let inputStream = Fs.createReadStream('C:/Users/Public/selectedorgpro.csv', 'utf8');
-          
-              inputStream
-              .pipe(csv())
-              .on('data', function (row1w) {
-          
-              //console.log('A row arrived: ', row1.email);
-              if(row1w.org_id != "" && row1w.pro_id != "" && row1w.date != ""){
-    
-                let monthh = parseInt(d.getMonth())+1;
-          
-              //console.log('A row arrived from orgpro file:');
-              var tts=[{
-                          "org_id": decrypt(row1w.org_id,"nyshu55055"),
-                          "pro_id": decrypt(row1w.pro_id,"nyshu55055"),
-                          "day":d.getDate().toString(),
-                          "month":monthh.toString(),
-                          "year":d.getFullYear().toString(),
-                          "hour": '0',
-                          "minute": '1',
-                          "memo": '',
-                          "date":d.getFullYear()+"-"+pad(monthh)+"-"+pad(d.getDate()),
+
+                  var sql = "Select * from timespentonproject";
+
+                  db.all(sql,[],(err,rows)=>{
+                      if(err) console.log(err);
+
+                      rows.forEach(row => {
+                        
+                        var tts=[{
+                          "org_id": decrypt(row.orgid.toString(),"nyshu55055"),
+                          "pro_id": decrypt(row.proid.toString(),"nyshu55055"),
+                          "day":row.day.toString(),
+                          "month":row.month.toString(),
+                          "year":row.year.toString(),
+                          "hour":decrypt(row.hour.toString(),"nyshu55055"),
+                          "minute":decrypt(row.minute.toString(),"nyshu55055"),
+                          "memo":row.memo.toString(),
+                          "date":row.date.toString(),
                         }];
-                        //console.log('A row arrived: ', tts);
-              const getUserDataOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                email: row1.email,
-                keybboardactivites: JSON.stringify(tts)
-                })
-                };
-      
-                fetch('https://deeptime-digital.com/api/user/time/spent/minute',getUserDataOptions)
-                .then(res => {
-                if (res.ok) {
-                res.json().then(json => {
-                
-                if(json == 'success'){
-                  console.log('success');
+                        const getUserDataOptions = {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ 
+                          email: row1.email,
+                          keybboardactivites: JSON.stringify(tts)
+                          })
+                          };
+
+
+                          fetch('https://deeptime-digital.com/api/user/time/spent/send',getUserDataOptions)
+                            .then(res => {
+                            if (res.ok) {
+                            res.json().then(json => {
+                            
+                            if(json == 'success'){
+                              
+                              var sql = "DELETE FROM timespentonproject WHERE id=?";
+
+                              db.run(sql,[row.id],(err)=>{
+                                  if(err) console.log(err);
+                                  console.log('timespentonproject row Deleted');
+                              });
                   
-                }
-                else if(json == 'failed'){
-                  console.log('failed');
-                  //setTheTime();
-                }
-                else{
-                  //console.log('not upload');
-                  //setTheTime();
-                }
-      
-                });
-                }
-                else{
-                  console.log('not ok');
-                  //setTheTime();
-                }
-                //console.log(res);
-                })
-                .catch((error) => {
-                // error callback
-                //console.error(error);
-                //setTheTime();
-                });
-              
-    
-          }
-    
-    
-        })
-        .on('end', function () {
-        //console.log('No more rows!');
-        });
-      }
-              }
-           }
-    
-    
-    
-    
-    
-    
-          }
+                            }
+                            else if(json == 'failed'){
+                              console.log('failed');
+                            }
+                  
+                            });
+
+                            }
+                            })
+                            .catch((error) => {
+                              
+                            });
+                        
+                          });
+                      });
     
       }
       })
@@ -1345,9 +1006,6 @@ checkInternetConnected(config);
     
       }
   }
-
-
-
 
 
 

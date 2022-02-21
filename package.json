@@ -1,7 +1,7 @@
 {
-  "name": "Deep Time",
+  "name": "DeepTime",
   "version": "1.0.0",
-  "description": "Deep Time",
+  "description": "DeepTime",
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -17,6 +17,7 @@
     "@electron-forge/maker-squirrel": "^6.0.0-beta.61",
     "@electron-forge/maker-zip": "^6.0.0-beta.61",
     "electron": "^16.0.1",
+    "electron-rebuild": "^3.2.7",
     "javascript-obfuscator": "^3.0.0",
     "webpack-obfuscator": "^3.5.0"
   },
@@ -38,7 +39,8 @@
     "iohook": "^0.9.3",
     "jquery": "^3.6.0",
     "mysql": "^2.18.1",
-    "node-hook": "^1.0.0"
+    "node-hook": "^1.0.0",
+    "sqlite3": "^5.0.2"
   },
   "config": {
     "forge": {
@@ -47,7 +49,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "Deep Time"
+            "name": "DeepTime"
           }
         },
         {
