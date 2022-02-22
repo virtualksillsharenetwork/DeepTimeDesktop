@@ -6,7 +6,9 @@
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "author": "Itsan Soft",
   "license": "MIT",
@@ -17,6 +19,7 @@
     "@electron-forge/maker-squirrel": "^6.0.0-beta.61",
     "@electron-forge/maker-zip": "^6.0.0-beta.61",
     "electron": "^16.0.1",
+    "electron-builder": "^22.14.13",
     "electron-rebuild": "^3.2.7",
     "javascript-obfuscator": "^3.0.0",
     "webpack-obfuscator": "^3.5.0"
@@ -67,6 +70,18 @@
           "config": {}
         }
       ]
+    }
+  },
+  "build": {
+    "appId": "com.deeptime.app",
+    "productName": "Deep Time",
+    "win": {
+      "target": "nsis",
+      "icon": "./deepico.png"
+    },
+    "nsis": {
+      "allowToChangeInstallationDirectory": true,
+      "oneClick":false
     }
   }
 }

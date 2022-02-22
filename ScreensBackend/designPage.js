@@ -226,8 +226,8 @@ function timeCorrectUI(){
                     .on('data', function (row) {
                       
                           
-                          var org_id = decrypt(row.org_id,"nyshu55055");
-                          var pro_id = decrypt(row.pro_id,"nyshu55055");
+                          var org_id = decrypt(row.org_id,"p45iw2hecw");
+                          var pro_id = decrypt(row.pro_id,"p45iw2hecw");
                           var email = row1.email;
                           getProjectName(org_id,pro_id,email);
 
@@ -464,8 +464,8 @@ if(isPaused) {
             rows.forEach(row => {
               var datt = new Date();
               var updateMinute2 = "UPDATE timespentonproject SET minute=? WHERE day=? and month=? and year=?";
-               var mint = parseInt(decrypt(row.minute.toString(),"nyshu55055"))+1;
-              db.run(updateMinute2,[encrypt(mint.toString(),"nyshu55055"),pad(datt.getDate()),monthh,datt.getFullYear()],(err)=>{
+               var mint = parseInt(decrypt(row.minute.toString(),"p45iw2hecw"))+1;
+              db.run(updateMinute2,[encrypt(mint.toString(),"p45iw2hecw"),pad(datt.getDate()),monthh,datt.getFullYear()],(err)=>{
                 if(err){ console.log(err);}
                 else{
                   console.log('minute update');
@@ -481,7 +481,7 @@ if(isPaused) {
              let monthh = parseInt(dat.getMonth())+1;
 
             var createMinute = "INSERT INTO timespentonproject (orgid, proid, day,month,year,hour,minute,memo,date) VALUES (?,?,?,?,?,?,?,?,?)";
-              db.run(createMinute,[row1.org_id,row1.pro_id,dat.getDate(),monthh,d.getFullYear(),encrypt('0','nyshu55055'),encrypt('1','nyshu55055'),memoo,pad(dat.getFullYear())+"-"+pad(monthh)+"-"+pad(dat.getDate())],(err)=>{
+              db.run(createMinute,[row1.org_id,row1.pro_id,dat.getDate(),monthh,d.getFullYear(),encrypt('0','p45iw2hecw'),encrypt('1','p45iw2hecw'),memoo,pad(dat.getFullYear())+"-"+pad(monthh)+"-"+pad(dat.getDate())],(err)=>{
                 if(err){ console.log(err);}
                 else{
                   console.log('minute created');
@@ -534,8 +534,8 @@ if(isPaused) {
               rows.forEach(row => {
                 var datt = new Date();
                 var updateMinute2 = "UPDATE timespentonproject SET hour=?, minute=? WHERE day=? and month=? and year=?";
-                 var hourr = parseInt(decrypt(row.hour.toString(),"nyshu55055"))+1;
-                db.run(updateMinute2,[encrypt(hourr.toString(),"nyshu55055"),encrypt('0',"nyshu55055"),pad(datt.getDate()),monthh,datt.getFullYear()],(err)=>{
+                 var hourr = parseInt(decrypt(row.hour.toString(),"p45iw2hecw"))+1;
+                db.run(updateMinute2,[encrypt(hourr.toString(),"p45iw2hecw"),encrypt('0',"p45iw2hecw"),pad(datt.getDate()),monthh,datt.getFullYear()],(err)=>{
                   if(err){ console.log(err);}
                   else{
                     console.log('hour update');
@@ -551,7 +551,7 @@ if(isPaused) {
                let monthh = parseInt(datt.getMonth())+1;
   
               var createMinute = "INSERT INTO timespentonproject (orgid, proid, day,month,year,hour,minute,memo,date) VALUES (?,?,?,?,?,?,?,?,?)";
-                db.run(createMinute,[row1.org_id,row1.pro_id,datt.getDate(),monthh,datt.getFullYear(),encrypt('1','nyshu55055'),encrypt('0','nyshu55055'),memoo,pad(datt.getFullYear())+"-"+pad(monthh)+"-"+pad(datt.getDate())],(err)=>{
+                db.run(createMinute,[row1.org_id,row1.pro_id,datt.getDate(),monthh,datt.getFullYear(),encrypt('1','p45iw2hecw'),encrypt('0','p45iw2hecw'),memoo,pad(datt.getFullYear())+"-"+pad(monthh)+"-"+pad(datt.getDate())],(err)=>{
                   if(err){ console.log(err);}
                   else{
                     console.log('hour created');
@@ -617,10 +617,10 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
             let monthh = parseInt(dfd.getMonth())+1;
                   const ScreenCaptures = row.path.toString().split("|");
                   form.append('email', row1.email);
-                  form.append('datee', decrypt(row.date.toString(),"nyshu55055"));
-                  form.append('time', decrypt(row.time.toString(),"nyshu55055"));
-                  form.append('org_id',decrypt(row.orgid.toString(),"nyshu55055"));
-                  form.append('pro_id',decrypt(row.proid.toString(),"nyshu55055"));
+                  form.append('datee', decrypt(row.date.toString(),"p45iw2hecw"));
+                  form.append('time', decrypt(row.time.toString(),"p45iw2hecw"));
+                  form.append('org_id',decrypt(row.orgid.toString(),"p45iw2hecw"));
+                  form.append('pro_id',decrypt(row.proid.toString(),"p45iw2hecw"));
                   form.append('file1', Fs.createReadStream('C:\\Users\\'+ScreenCaptures[0]+'\\Documents\\ActiveScreens\\'+ScreenCaptures[1]));
                   form.submit('https://deeptime-digital.com/api/upload/data/user-from/desktop', function(err, res) {
                   
@@ -700,11 +700,11 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
                     rows.forEach(row => {
                       var tts=[{
-                        "org_id": decrypt(row.orgid.toString(),"nyshu55055"),
-                        "pro_id":decrypt(row.proid.toString(),"nyshu55055"),
-                        "clicks":decrypt(row.clicks.toString(),"nyshu55055"),
-                        "date":decrypt(row.date.toString(),"nyshu55055"),
-                        "time":decrypt(row.time.toString(),"nyshu55055")
+                        "org_id": decrypt(row.orgid.toString(),"p45iw2hecw"),
+                        "pro_id":decrypt(row.proid.toString(),"p45iw2hecw"),
+                        "clicks":decrypt(row.clicks.toString(),"p45iw2hecw"),
+                        "date":decrypt(row.date.toString(),"p45iw2hecw"),
+                        "time":decrypt(row.time.toString(),"p45iw2hecw")
                       }];
                       const getUserDataOptions = {
                         method: 'POST',
@@ -777,11 +777,11 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
                 rows.forEach(row => {
                   
                   var tts=[{
-                    "org_id": decrypt(row.orgid.toString(),"nyshu55055"),
-                    "pro_id":decrypt(row.proid.toString(),"nyshu55055"),
-                    "clicks":decrypt(row.clicks.toString(),"nyshu55055"),
-                    "date":decrypt(row.date.toString(),"nyshu55055"),
-                    "time":decrypt(row.time.toString(),"nyshu55055")
+                    "org_id": decrypt(row.orgid.toString(),"p45iw2hecw"),
+                    "pro_id":decrypt(row.proid.toString(),"p45iw2hecw"),
+                    "clicks":decrypt(row.clicks.toString(),"p45iw2hecw"),
+                    "date":decrypt(row.date.toString(),"p45iw2hecw"),
+                    "time":decrypt(row.time.toString(),"p45iw2hecw")
                   }];
                   const getUserDataOptions = {
                     method: 'POST',
@@ -948,13 +948,13 @@ checkInternetConnected(config);
                       rows.forEach(row => {
                         
                         var tts=[{
-                          "org_id": decrypt(row.orgid.toString(),"nyshu55055"),
-                          "pro_id": decrypt(row.proid.toString(),"nyshu55055"),
+                          "org_id": decrypt(row.orgid.toString(),"p45iw2hecw"),
+                          "pro_id": decrypt(row.proid.toString(),"p45iw2hecw"),
                           "day":row.day.toString(),
                           "month":row.month.toString(),
                           "year":row.year.toString(),
-                          "hour":decrypt(row.hour.toString(),"nyshu55055"),
-                          "minute":decrypt(row.minute.toString(),"nyshu55055"),
+                          "hour":decrypt(row.hour.toString(),"p45iw2hecw"),
+                          "minute":decrypt(row.minute.toString(),"p45iw2hecw"),
                           "memo":row.memo.toString(),
                           "date":row.date.toString(),
                         }];
