@@ -6,7 +6,7 @@ var FormData = require('form-data');
 const Fs = require('fs');
 const csv = require('csv-parser');
 var CryptoJS = require('crypto-js');
-
+const sqlite3 = require('sqlite3').verbose();
 
 let mouse_clicks_detection;
 var isPaused = false;
@@ -19,13 +19,12 @@ let hourrr=0;
 let ten_min = 0;
 let change_cache = 1;
 
-const sqlite3 = require('sqlite3').verbose();
-            const db = new sqlite3.Database("C:/ProgramData/deeptime.db",sqlite3.OPEN_READWRITE, (err)=>{
-                if(err){ console.error(err);}
-                else
-                {console.log('connected');}
-            });
 
+const ddb = new sqlite3.Database("C:/ProgramData/deeptime.db",sqlite3.OPEN_READWRITE, (err)=>{
+    if(err){ console.error(err);}
+    else
+    {console.log('connected');}
+});
 
 TimeStop();
 
@@ -432,7 +431,7 @@ function Call_Me_After_Every_Minute(){
     }
     //minsLabel.innerHTML = pad(totalSeconds % 60);
     }
-    timeCorrectUI();
+    //timeCorrectUI();
 
 /* ****************************************************update minutes************************************************************* */
 
@@ -457,7 +456,7 @@ if(isPaused) {
         let monthh = parseInt(dat.getMonth())+1;
         var updateMinute = "SELECT * FROM timespentonproject WHERE day=? and month=? and year=?";
 
-        db.all(updateMinute,[pad(dat.getDate()),monthh,dat.getFullYear()],(err,rows)=>{
+        ddb.all(updateMinute,[pad(dat.getDate()),monthh,dat.getFullYear()],(err,rows)=>{
             if(err) console.log(err);
             //console.log(rows);
             if(rows.length>0){
@@ -465,7 +464,7 @@ if(isPaused) {
               var datt = new Date();
               var updateMinute2 = "UPDATE timespentonproject SET minute=? WHERE day=? and month=? and year=?";
                var mint = parseInt(decrypt(row.minute.toString(),"p45iw2hecw"))+1;
-              db.run(updateMinute2,[encrypt(mint.toString(),"p45iw2hecw"),pad(datt.getDate()),monthh,datt.getFullYear()],(err)=>{
+              ddb.run(updateMinute2,[encrypt(mint.toString(),"p45iw2hecw"),pad(datt.getDate()),monthh,datt.getFullYear()],(err)=>{
                 if(err){ console.log(err);}
                 else{
                   console.log('minute update');
@@ -481,7 +480,7 @@ if(isPaused) {
              let monthh = parseInt(dat.getMonth())+1;
 
             var createMinute = "INSERT INTO timespentonproject (orgid, proid, day,month,year,hour,minute,memo,date) VALUES (?,?,?,?,?,?,?,?,?)";
-              db.run(createMinute,[row1.org_id,row1.pro_id,dat.getDate(),monthh,d.getFullYear(),encrypt('0','p45iw2hecw'),encrypt('1','p45iw2hecw'),memoo,pad(dat.getFullYear())+"-"+pad(monthh)+"-"+pad(dat.getDate())],(err)=>{
+              ddb.run(createMinute,[row1.org_id,row1.pro_id,dat.getDate(),monthh,d.getFullYear(),encrypt('0','p45iw2hecw'),encrypt('1','p45iw2hecw'),memoo,pad(dat.getFullYear())+"-"+pad(monthh)+"-"+pad(dat.getDate())],(err)=>{
                 if(err){ console.log(err);}
                 else{
                   console.log('minute created');
@@ -527,7 +526,7 @@ if(isPaused) {
           let monthh = parseInt(dat.getMonth())+1;
           var updateHour = "SELECT * FROM timespentonproject WHERE day=? and month=? and year=?";
   
-          db.all(updateHour,[pad(dat.getDate()),monthh,dat.getFullYear()],(err,rows)=>{
+          ddb.all(updateHour,[pad(dat.getDate()),monthh,dat.getFullYear()],(err,rows)=>{
               if(err) console.log(err);
               console.log(rows);
               if(rows.length>0){
@@ -535,7 +534,7 @@ if(isPaused) {
                 var datt = new Date();
                 var updateMinute2 = "UPDATE timespentonproject SET hour=?, minute=? WHERE day=? and month=? and year=?";
                  var hourr = parseInt(decrypt(row.hour.toString(),"p45iw2hecw"))+1;
-                db.run(updateMinute2,[encrypt(hourr.toString(),"p45iw2hecw"),encrypt('0',"p45iw2hecw"),pad(datt.getDate()),monthh,datt.getFullYear()],(err)=>{
+                ddb.run(updateMinute2,[encrypt(hourr.toString(),"p45iw2hecw"),encrypt('0',"p45iw2hecw"),pad(datt.getDate()),monthh,datt.getFullYear()],(err)=>{
                   if(err){ console.log(err);}
                   else{
                     console.log('hour update');
@@ -551,7 +550,7 @@ if(isPaused) {
                let monthh = parseInt(datt.getMonth())+1;
   
               var createMinute = "INSERT INTO timespentonproject (orgid, proid, day,month,year,hour,minute,memo,date) VALUES (?,?,?,?,?,?,?,?,?)";
-                db.run(createMinute,[row1.org_id,row1.pro_id,datt.getDate(),monthh,datt.getFullYear(),encrypt('1','p45iw2hecw'),encrypt('0','p45iw2hecw'),memoo,pad(datt.getFullYear())+"-"+pad(monthh)+"-"+pad(datt.getDate())],(err)=>{
+                ddb.run(createMinute,[row1.org_id,row1.pro_id,datt.getDate(),monthh,datt.getFullYear(),encrypt('1','p45iw2hecw'),encrypt('0','p45iw2hecw'),memoo,pad(datt.getFullYear())+"-"+pad(monthh)+"-"+pad(datt.getDate())],(err)=>{
                   if(err){ console.log(err);}
                   else{
                     console.log('hour created');
@@ -607,7 +606,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
               var sql = "Select * from screenshoots";
 
-              db.all(sql,[],(err,rows)=>{
+              ddb.all(sql,[],(err,rows)=>{
                   if(err) console.log(err);
 
                   rows.forEach(row => {
@@ -639,7 +638,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
                           var sql = "DELETE FROM screenshoots WHERE id=?";
 
-                            db.run(sql,[row.id],(err)=>{
+                            ddb.run(sql,[row.id],(err)=>{
                                 if(err) console.log(err);
 
                                 console.log('SS row Deleted');
@@ -695,7 +694,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
     
                 var sql = "Select * from keyboardclicks";
 
-                db.all(sql,[],(err,rows)=>{
+                ddb.all(sql,[],(err,rows)=>{
                     if(err) console.log(err);
 
                     rows.forEach(row => {
@@ -725,7 +724,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
                               console.log('keyboard data upload success');
                               var sql = "DELETE FROM keyboardclicks WHERE id=?";
 
-                              db.run(sql,[row.id],(err)=>{
+                              ddb.run(sql,[row.id],(err)=>{
                                   if(err) console.log(err);
                                   console.log('keyboard row Deleted');
                               });
@@ -771,7 +770,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
             var sql = "Select * from mouseclicks";
 
-            db.all(sql,[],(err,rows)=>{
+            ddb.all(sql,[],(err,rows)=>{
                 if(err) console.log(err);
 
                 rows.forEach(row => {
@@ -802,7 +801,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
                       console.log('mouse data upload success');
                       var sql = "DELETE FROM mouseclicks WHERE id=?";
 
-                      db.run(sql,[row.id],(err)=>{
+                      ddb.run(sql,[row.id],(err)=>{
                           if(err) console.log(err);
                           console.log('mouse row Deleted');
                       });
@@ -942,7 +941,7 @@ checkInternetConnected(config);
 
                   var sql = "Select * from timespentonproject";
 
-                  db.all(sql,[],(err,rows)=>{
+                  ddb.all(sql,[],(err,rows)=>{
                       if(err) console.log(err);
 
                       rows.forEach(row => {
@@ -977,7 +976,7 @@ checkInternetConnected(config);
                               
                               var sql = "DELETE FROM timespentonproject WHERE id=?";
 
-                              db.run(sql,[row.id],(err)=>{
+                              ddb.run(sql,[row.id],(err)=>{
                                   if(err) console.log(err);
                                   console.log('timespentonproject row Deleted');
                               });

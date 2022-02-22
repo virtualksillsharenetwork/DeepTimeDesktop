@@ -71,8 +71,9 @@ else{
 
 
         }
+        ipc.send('relaunch');
     });
-
+    
         
 }
 

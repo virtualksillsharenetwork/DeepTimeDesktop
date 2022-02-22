@@ -34,7 +34,7 @@ app.whenReady().then(() => {
     icon: __dirname +'/deepico.png',
     width: 330,//330
     height: 600,//600 
-    resizable: false,
+    resizable: true,
     fullscreen: false,
     maximizable: false,
     center:true,
@@ -64,7 +64,10 @@ app.whenReady().then(() => {
   });
   ipcMain.on("gotoLogin", (event, arg) => {
     gotoLogin();
-   
+  });
+  ipcMain.on("relaunch", (event, arg) => {
+    app.relaunch()
+    app.exit()
   });
 
   })
@@ -74,7 +77,7 @@ const createWindow = () => {
 
   mainwindow.setMenuBarVisibility(false)
   mainwindow.loadFile('Screens/login.html')
-  //mainwindow.webContents.openDevTools();
+  mainwindow.webContents.openDevTools();
   }
 
 
