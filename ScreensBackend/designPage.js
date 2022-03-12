@@ -13,10 +13,9 @@ var isPaused = false;
 var d = new Date();
 let memoo = '';
 let updateHours_minutes = 0;
-
+let ten_min =0;
 let minnn=0;
 let hourrr=0;
-let ten_min = 0;
 let change_cache = 1;
 
 
@@ -49,7 +48,7 @@ TimeStop();
 
 
 function fun (){
-  console.log("detector start");
+  //console.log("detector start");
   mouse_clicks_detection = exec('C:/Program Files (x86)/Default Company Name/mcd/MouseClickDetector.exe', function(err, data) {  
   console.error(err)
   //console.log(data.toString());                       
@@ -91,34 +90,34 @@ fun();
   }
 
 
-  function  correctTheTime(email)
-{
+//   function  correctTheTime(email)
+// {
 
-      const getUserDataOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            email: email
-    })
-    };
+//       const getUserDataOptions = {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ 
+//             email: email
+//     })
+//     };
 
 
-    fetch('https://deeptime-digital.com/api/send/data-time/user-to/web',getUserDataOptions)
-    .then(res => {
-        //if (res.ok) {
-          //res.json().then(json => {
-            //console.log(json.email_address);
+//     fetch('https://deeptime-digital.com/api/send/data-time/user-to/web',getUserDataOptions)
+//     .then(res => {
+//         //if (res.ok) {
+//           //res.json().then(json => {
+//             //console.log(json.email_address);
             
             
-          //});
-        //}
-      })
-    .catch((error) => {
-      // error callback
-        console.error(error);
-    });
+//           //});
+//         //}
+//       })
+//     .catch((error) => {
+//       // error callback
+//         console.error(error);
+//     });
 
-  }
+//   }
 
   /* ****************************************************get user data************************************************************* */
 
@@ -167,7 +166,7 @@ fun();
             //console.log('A row arrived: ', row.email);
             if(row.email != ""){
               //console.log(d.getDay());
-              correctTheTime(row.email);
+              //correctTheTime(row.email);
               getUser(row.email);
               if(d.getDay() == 0){
                 $( document ).ready(function() {
@@ -227,7 +226,7 @@ function timeCorrectUI(){
       inputStream
         .pipe(csv())
         .on('data', function (row1) {
-          correctTheTime(row1.email);
+          //correctTheTime(row1.email);
 
 
                 if (Fs.existsSync('C:/Users/Public/selectedorgpro.csv')) {
@@ -409,22 +408,7 @@ function backtoselection(){
 
 function Call_Me_After_Every_Minute(){ 
 
-  
-  if(isPaused) {
-    updateHours_minutes++;
-  }
-  timeCorrectUI();
-  setTime();
-
-
-  /* ****************************************************change cache of image************************************************************* */
-  change_cache++;
-  if (Fs.existsSync('C:/Users/Public/LastCapture.jpg')) {
-    $("#lastSSdiv").html('');
-    var show_picscode = '<img src="C:/Users/Public/LastCapture.jpg?v='+change_cache+'" id="lastSS" name="lastSS" alt="Current Screen Shoot" style="width: 340px;height: 200px;"></img>';
-    $("#lastSSdiv").append(show_picscode);
-  }
-/* ****************************************************arrange time correctly************************************************************* */
+  /* ****************************************************arrange time correctly************************************************************* */
   if(isPaused) {
     ten_min++;
     minnn++;
@@ -450,6 +434,21 @@ function Call_Me_After_Every_Minute(){
     }
     //minsLabel.innerHTML = pad(totalSeconds % 60);
     }
+  // if(isPaused) {
+  //   updateHours_minutes++;
+  // }
+  //timeCorrectUI();
+  setTime();
+
+
+  /* ****************************************************change cache of image************************************************************* */
+  change_cache++;
+  if (Fs.existsSync('C:/Users/Public/LastCapture.jpg')) {
+    $("#lastSSdiv").html('');
+    var show_picscode = '<img src="C:/Users/Public/LastCapture.jpg?v='+change_cache+'" id="lastSS" name="lastSS" alt="Current Screen Shoot" style="width: 340px;height: 200px;"></img>';
+    $("#lastSSdiv").append(show_picscode);
+  }
+
     
 
 /* ****************************************************update minutes************************************************************* */
@@ -486,7 +485,7 @@ if(isPaused) {
               ddb.run(updateMinute2,[encrypt(mint.toString(),"p45iw2hecw"),pad(datt.getDate()),monthh,datt.getFullYear()],(err)=>{
                 if(err){ console.log(err);}
                 else{
-                  console.log('minute update');
+                  //console.log('minute update');
                   setTime();
                 }
             });
@@ -502,7 +501,7 @@ if(isPaused) {
               ddb.run(createMinute,[row1.org_id,row1.pro_id,dat.getDate(),monthh,d.getFullYear(),encrypt('0','p45iw2hecw'),encrypt('1','p45iw2hecw'),memoo,pad(dat.getFullYear())+"-"+pad(monthh)+"-"+pad(dat.getDate())],(err)=>{
                 if(err){ console.log(err);}
                 else{
-                  console.log('minute created');
+                  //console.log('minute created');
                   setTime();
                 }
 
@@ -611,7 +610,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 
   //console.log('A row arrived: ', row1.email);
   if(row1.email != ""){
-    correctTheTime(row1.email);
+    //correctTheTime(row1.email);
     
     if (Fs.existsSync('C:/Users/Public/selectedorgpro.csv')) {
 
@@ -660,7 +659,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
                             ddb.run(sql,[row.id],(err)=>{
                                 if(err) console.log(err);
 
-                                console.log('SS row Deleted');
+                                //console.log('SS row Deleted');
                             });
   
                          // console.log('SS upload success');
@@ -740,12 +739,12 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
                           res.json().then(json => {
                             
                             if(json == 'success'){
-                              console.log('keyboard data upload success');
+                              //console.log('keyboard data upload success');
                               var sql = "DELETE FROM keyboardclicks WHERE id=?";
 
                               ddb.run(sql,[row.id],(err)=>{
                                   if(err) console.log(err);
-                                  console.log('keyboard row Deleted');
+                                  //console.log('keyboard row Deleted');
                               });
                             }
 
@@ -785,7 +784,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
   //console.log('A row arrived: ', row1.email);
   if(row1.email != ""){
     
-    correctTheTime(row1.email);
+    //correctTheTime(row1.email);
 
             var sql = "Select * from mouseclicks";
 
@@ -817,12 +816,12 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
                     res.json().then(json => {
                     
                     if(json == 'success'){
-                      console.log('mouse data upload success');
+                      //console.log('mouse data upload success');
                       var sql = "DELETE FROM mouseclicks WHERE id=?";
 
                       ddb.run(sql,[row.id],(err)=>{
                           if(err) console.log(err);
-                          console.log('mouse row Deleted');
+                          //console.log('mouse row Deleted');
                       });
                     }
 
@@ -864,7 +863,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 //         alert("Check Internet Connection and Try Again.");
 //         TimeStop();
 // }
-timeCorrectUI();
+//timeCorrectUI();
 }
 
 
@@ -915,7 +914,7 @@ checkInternetConnected(config);
    
   csvWriter.writeRecords(records)       // returns a promise
       .then(() => {
-          console.log('...sst continue');
+          //console.log('...sst continue');
       }); 
   }
   
@@ -937,7 +936,7 @@ checkInternetConnected(config);
   
   csvWriter.writeRecords(records)       // returns a promise
   .then(() => {
-      console.log('...sst stop');
+      //console.log('...sst stop');
   }); 
   }
 
@@ -997,7 +996,7 @@ checkInternetConnected(config);
 
                               ddb.run(sql,[row.id],(err)=>{
                                   if(err) console.log(err);
-                                  console.log('timespentonproject row Deleted');
+                                  console.log('time_sent');
                               });
                   
                             }
