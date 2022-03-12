@@ -5,77 +5,132 @@ var CryptoJS = require('crypto-js');
 const Fs = require('fs');
 const csv = require('csv-parser');
 
+
 // mouse_clicks_detection = exec('C:/xampp/xampp-control.exe', function(err, data) {  
 //   console.log(err)
 //   console.log(data.toString());                       
 //   });
 
+process.on('uncaughtException', function (err) {
+    console.error(err);
+  });
 
 if (Fs.existsSync('C:/ProgramData/deeptime.db')) {
+
+    if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
+        //document.getElementById('loaderdiv').style.display = "none";
+        //document.getElementById('contentdiv').style.display = "block";
+    }
+    else{
+        document.getElementById('loaderdiv').style.display = "none";
+    }
 
 }
 else{
 
+    document.getElementById('loaderdiv').style.display = "block";
+    document.getElementById('contentdiv').style.display = "none";
+
     Fs.writeFile('C:/ProgramData/deeptime.db','', function (err) {
-        if (err){}
-        else{
-            const sqlite3 = require('sqlite3').verbose();
-            const db = new sqlite3.Database("C:/ProgramData/deeptime.db",sqlite3.OPEN_READWRITE, (err)=>{
-                if(err){ console.error(err);}
-                else
-                {console.log('connected');}
-            });
-            
+        
+        
+        setInterval(createdb,2000); 
 
 
-            var screenshoots = "CREATE TABLE IF NOT EXISTS screenshoots(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,orgid varchar(1000), proid varchar(1000), path varchar(1000), date varchar(1000), time varchar(1000))";
+        if(err) throw err;
 
-            db.run(screenshoots,[],(err)=>{
-                if(err){console.error(err);} 
-                else{
-                    console.log('screenshoots');
-                }
-            });
-
-                var keyboardclicks = "CREATE TABLE IF NOT EXISTS keyboardclicks(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,orgid varchar(1000), proid varchar(1000), clicks varchar(1000), date varchar(1000), time varchar(1000))";
-
-            db.run(keyboardclicks,[],(err)=>{
-                if(err){console.error(err);} 
-                else{
-                    console.log('keyboardclicks');
-                }
-
-            });
-                var mouseclicks = "CREATE TABLE IF NOT EXISTS mouseclicks(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,orgid varchar(1000), proid varchar(1000), clicks varchar(1000), date varchar(1000), time varchar(1000))";
-
-            db.run(mouseclicks,[],(err)=>{
-                if(err){console.error(err);} 
-                else{
-                    console.log('mouseclicks');
-                }
-            
-                
-            });
-
-
-            var timespentonproject = "CREATE TABLE IF NOT EXISTS timespentonproject(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,orgid varchar(1000), proid varchar(1000), day varchar(1000), month varchar(1000), year varchar(1000), hour varchar(1000), minute varchar(1000), memo varchar(1000), date varchar(1000))";
-
-            db.run(timespentonproject,[],(err)=>{
-                if(err){console.error(err);} 
-                else{
-                    console.log('timespentonproject');
-                }
-            
-                
-            });
-
-
-        }
-        ipc.send('relaunch');
-    });
     
+
+});
+
+  
         
 }
+
+
+
+function createdb(){
+    const sqlite3 = require('sqlite3').verbose();
+    const db = new sqlite3.Database("C:/ProgramData/deeptime.db",sqlite3.OPEN_READWRITE, (err)=>{
+        if(err){ console.error(err);}
+        else
+        {console.log('connected');}
+    });
+    
+
+    var tot_tables = "SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name != 'android_metadata' AND name != 'sqlite_sequence';";
+    db.all(tot_tables,[],(err,rows)=>{
+            console.log('tables are : '+rows[0]['count(*)']);
+            if(err) throw err;
+            if(parseInt(rows[0]['count(*)']) == 4){
+                ipc.send('relaunch');
+            }
+            if(parseInt(rows[0]['count(*)']) < 4){
+
+
+                
+
+                    var screenshoots = "CREATE TABLE IF NOT EXISTS screenshoots(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,orgid varchar(1000), proid varchar(1000), path varchar(1000), date varchar(1000), time varchar(1000))";
+        
+                    db.run(screenshoots,[],(err)=>{
+                        if(err){console.error(err);} 
+                        else{
+                            console.log('screenshoots');
+                            
+                        }
+                    });
+        
+                        var keyboardclicks = "CREATE TABLE IF NOT EXISTS keyboardclicks(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,orgid varchar(1000), proid varchar(1000), clicks varchar(1000), date varchar(1000), time varchar(1000))";
+        
+                    db.run(keyboardclicks,[],(err)=>{
+                        if(err){console.error(err);} 
+                        else{
+                            console.log('keyboardclicks');
+                            
+                        }
+        
+                    });
+                        var mouseclicks = "CREATE TABLE IF NOT EXISTS mouseclicks(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,orgid varchar(1000), proid varchar(1000), clicks varchar(1000), date varchar(1000), time varchar(1000))";
+        
+                    db.run(mouseclicks,[],(err)=>{
+                        if(err){console.error(err);} 
+                        else{
+                            console.log('mouseclicks');
+                            
+                        }
+                    
+                        
+                    });
+        
+        
+                    var timespentonproject = "CREATE TABLE IF NOT EXISTS timespentonproject(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,orgid varchar(1000), proid varchar(1000), day varchar(1000), month varchar(1000), year varchar(1000), hour varchar(1000), minute varchar(1000), memo varchar(1000), date varchar(1000))";
+        
+                    db.run(timespentonproject,[],(err)=>{
+                        if(err){console.error(err);} 
+                        else{
+                            console.log('timespentonproject');
+                            
+                        }
+                    
+                        
+                    });
+        
+            
+
+
+            }
+
+    });
+}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -93,9 +148,10 @@ else{
     inputStream
       .pipe(csv())
       .on('data', function (row) {
-        
+            
           console.log('A row arrived: ', row.email);
           if(row.email != ""){
+            
             ipc.send('createIndexWindow');
           }
       })

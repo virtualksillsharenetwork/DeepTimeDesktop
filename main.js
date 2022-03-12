@@ -32,7 +32,7 @@ app.whenReady().then(() => {
 
   mainwindow = new BrowserWindow({ 
     icon: __dirname +'/deepico.png',
-    width: 330,//330
+    width: 800,//330
     height: 600,//600 
     resizable: true,
     fullscreen: false,

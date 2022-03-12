@@ -26,6 +26,22 @@ const ddb = new sqlite3.Database("C:/ProgramData/deeptime.db",sqlite3.OPEN_READW
     {console.log('connected');}
 });
 
+process.on('uncaughtException', function (err) {
+  console.error(err);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 TimeStop();
 
 
@@ -211,7 +227,7 @@ function timeCorrectUI(){
       inputStream
         .pipe(csv())
         .on('data', function (row1) {
-
+          correctTheTime(row1.email);
 
 
                 if (Fs.existsSync('C:/Users/Public/selectedorgpro.csv')) {
@@ -298,6 +314,7 @@ function timeCorrectUI(){
         });
     }
   }
+  
   timeCorrectUI();
 
 
@@ -393,9 +410,11 @@ function backtoselection(){
 function Call_Me_After_Every_Minute(){ 
 
   
-  
- 
-  
+  if(isPaused) {
+    updateHours_minutes++;
+  }
+  timeCorrectUI();
+  setTime();
 
 
   /* ****************************************************change cache of image************************************************************* */
@@ -431,13 +450,13 @@ function Call_Me_After_Every_Minute(){
     }
     //minsLabel.innerHTML = pad(totalSeconds % 60);
     }
-    //timeCorrectUI();
+    
 
 /* ****************************************************update minutes************************************************************* */
 
 if(isPaused) {
-  updateHours_minutes++;
-  if(updateHours_minutes != 60){
+  
+  //if(updateHours_minutes != 60){
 
   if (Fs.existsSync('C:/Users/Public/selectedorgpro.csv')) {
 
@@ -500,82 +519,82 @@ if(isPaused) {
 
     }
 
-  }
+  //}
   }
 
   
 /* ****************************************************update hours************************************************************* */
 
-  if(isPaused) {
-    if(updateHours_minutes ==60){
+  // if(isPaused) {
+  //   if(updateHours_minutes == 60){
 
-      if (Fs.existsSync('C:/Users/Public/selectedorgpro.csv')) {
+  //     if (Fs.existsSync('C:/Users/Public/selectedorgpro.csv')) {
 
-        const CsvReadableStream = require('csv-reader');
+  //       const CsvReadableStream = require('csv-reader');
     
-        let inputStream = Fs.createReadStream('C:/Users/Public/selectedorgpro.csv', 'utf8');
+  //       let inputStream = Fs.createReadStream('C:/Users/Public/selectedorgpro.csv', 'utf8');
     
-        inputStream
-        .pipe(csv())
-        .on('data', function (row1) {
+  //       inputStream
+  //       .pipe(csv())
+  //       .on('data', function (row1) {
     
-        //console.log('A row arrived: ', row1.email);
-        if(row1.org_id != "" && row1.pro_id != "" && row1.date != ""){
+  //       //console.log('A row arrived: ', row1.email);
+  //       if(row1.org_id != "" && row1.pro_id != "" && row1.date != ""){
 
-          var dat = new Date();
-          let monthh = parseInt(dat.getMonth())+1;
-          var updateHour = "SELECT * FROM timespentonproject WHERE day=? and month=? and year=?";
+  //         var dat = new Date();
+  //         let monthh = parseInt(dat.getMonth())+1;
+  //         var updateHour = "SELECT * FROM timespentonproject WHERE day=? and month=? and year=?";
   
-          ddb.all(updateHour,[pad(dat.getDate()),monthh,dat.getFullYear()],(err,rows)=>{
-              if(err) console.log(err);
-              console.log(rows);
-              if(rows.length>0){
-              rows.forEach(row => {
-                var datt = new Date();
-                var updateMinute2 = "UPDATE timespentonproject SET hour=?, minute=? WHERE day=? and month=? and year=?";
-                 var hourr = parseInt(decrypt(row.hour.toString(),"p45iw2hecw"))+1;
-                ddb.run(updateMinute2,[encrypt(hourr.toString(),"p45iw2hecw"),encrypt('0',"p45iw2hecw"),pad(datt.getDate()),monthh,datt.getFullYear()],(err)=>{
-                  if(err){ console.log(err);}
-                  else{
-                    console.log('hour update');
-                    setTime();
-                  }
-              });
+  //         ddb.all(updateHour,[pad(dat.getDate()),monthh,dat.getFullYear()],(err,rows)=>{
+  //             if(err) console.log(err);
+  //             console.log(rows);
+  //             if(rows.length>0){
+  //             rows.forEach(row => {
+  //               var datt = new Date();
+  //               var updateMinute2 = "UPDATE timespentonproject SET hour=?, minute=? WHERE day=? and month=? and year=?";
+  //                var hourr = parseInt(decrypt(row.hour.toString(),"p45iw2hecw"))+1;
+  //               ddb.run(updateMinute2,[encrypt(hourr.toString(),"p45iw2hecw"),encrypt('0',"p45iw2hecw"),pad(datt.getDate()),monthh,datt.getFullYear()],(err)=>{
+  //                 if(err){ console.log(err);}
+  //                 else{
+  //                   console.log('hour update');
+  //                   setTime();
+  //                 }
+  //             });
             
-              });
-            }
-            else{
+  //             });
+  //           }
+  //           else{
   
-              var datt = new Date();
-               let monthh = parseInt(datt.getMonth())+1;
+  //             var datt = new Date();
+  //              let monthh = parseInt(datt.getMonth())+1;
   
-              var createMinute = "INSERT INTO timespentonproject (orgid, proid, day,month,year,hour,minute,memo,date) VALUES (?,?,?,?,?,?,?,?,?)";
-                ddb.run(createMinute,[row1.org_id,row1.pro_id,datt.getDate(),monthh,datt.getFullYear(),encrypt('1','p45iw2hecw'),encrypt('0','p45iw2hecw'),memoo,pad(datt.getFullYear())+"-"+pad(monthh)+"-"+pad(datt.getDate())],(err)=>{
-                  if(err){ console.log(err);}
-                  else{
-                    console.log('hour created');
-                    setTime();
-                  }
+  //             var createMinute = "INSERT INTO timespentonproject (orgid, proid, day,month,year,hour,minute,memo,date) VALUES (?,?,?,?,?,?,?,?,?)";
+  //               ddb.run(createMinute,[row1.org_id,row1.pro_id,datt.getDate(),monthh,datt.getFullYear(),encrypt('1','p45iw2hecw'),encrypt('0','p45iw2hecw'),memoo,pad(datt.getFullYear())+"-"+pad(monthh)+"-"+pad(datt.getDate())],(err)=>{
+  //                 if(err){ console.log(err);}
+  //                 else{
+  //                   console.log('hour created');
+  //                   setTime();
+  //                 }
   
-              });
-            }
+  //             });
+  //           }
   
-          });
-        }
-        })
-        .on('end', function () {
-        //console.log('No more rows!');
-        });
+  //         });
+  //       }
+  //       })
+  //       .on('end', function () {
+  //       //console.log('No more rows!');
+  //       });
     
-        }
+  //       }
 
-    updateHours_minutes = 0;
-
-
-    }
-  }
+  //   updateHours_minutes = 0;
 
 
+  //   }
+  // }
+
+  
   
 /* ****************************************************upload image data to server********************************************************* */
 
@@ -845,7 +864,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
 //         alert("Check Internet Connection and Try Again.");
 //         TimeStop();
 // }
-
+timeCorrectUI();
 }
 
 

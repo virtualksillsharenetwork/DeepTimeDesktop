@@ -253,33 +253,15 @@ await fetch('https://deeptime-digital.com/api/user/organizations/enabled/get',ge
 
         }
 
-        if (Fs.existsSync('C:/Users/Public/keyboardpress.csv')) {
+        if (Fs.existsSync('C:/ProgramData/deeptime.db')) {
 
-          Fs.unlink('C:/Users/Public/keyboardpress.csv', (err) => {
+          Fs.unlink('C:/ProgramData/deeptime.db', (err) => {
             if (err) throw err;
             
-          });
-          
-        }
-
-        if (Fs.existsSync('C:/Users/Public/mouseclicks.csv')) {
-
-            Fs.unlink('C:/Users/Public/mouseclicks.csv', (err) => {
-              if (err) throw err;
-              //ipc.send('gotoLogin');
-    
-            });
-            
-        }
-        if (Fs.existsSync('C:/Users/Public/screenshoots.csv')) {
-
-          Fs.unlink('C:/Users/Public/screenshoots.csv', (err) => {
-            if (err) throw err;
-            //ipc.send('gotoLogin');
   
           });
-          
-      }
+  
+          }
             
         if (Fs.existsSync('C:/Users/Public/selectedorgpro.csv')) {
 
