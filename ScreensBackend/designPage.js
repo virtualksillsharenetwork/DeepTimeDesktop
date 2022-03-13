@@ -438,7 +438,7 @@ function Call_Me_After_Every_Minute(){
   //   updateHours_minutes++;
   // }
   //timeCorrectUI();
-  setTime();
+  //setTime();
 
 
   /* ****************************************************change cache of image************************************************************* */
