@@ -4,10 +4,6 @@ const electronLocalshortcut = require('electron-localshortcut')
 let mainwindow;
 //var fs = require('fs');
 
-
-
-
-
 app.whenReady().then(() => {
 
 

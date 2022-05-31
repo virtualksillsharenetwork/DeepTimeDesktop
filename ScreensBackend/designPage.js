@@ -72,7 +72,7 @@ fun();
           };
 
 
-          fetch('https://deeptime-digital.com/api/get/data/user-project/name',getUserDataOptions)
+          fetch('https://admin.deeptime-digital.com/api/get/data/user-project/name',getUserDataOptions)
           .then(res => {
               if (res.ok) {
                 res.json().then(json => {
@@ -102,7 +102,7 @@ fun();
 //     };
 
 
-//     fetch('https://deeptime-digital.com/api/send/data-time/user-to/web',getUserDataOptions)
+//     fetch('https://admin.deeptime-digital.com/api/send/data-time/user-to/web',getUserDataOptions)
 //     .then(res => {
 //         //if (res.ok) {
 //           //res.json().then(json => {
@@ -133,7 +133,7 @@ fun();
     };
   
   
-    fetch('https://deeptime-digital.com/api/send/data/user-to/desktop',getUserDataOptions)
+    fetch('https://admin.deeptime-digital.com/api/send/data/user-to/desktop',getUserDataOptions)
     .then(res => {
         if (res.ok) {
           res.json().then(json => {
@@ -258,11 +258,12 @@ function timeCorrectUI(){
                         };
                         
                         
-                        fetch('https://deeptime-digital.com/api/user/get-nowlasthourminute/data/get',getUserDataOptions)
+                        fetch('https://admin.deeptime-digital.com/api/user/get-nowlasthourminute/data/get',getUserDataOptions)
                         .then(res => {
+                          
                             if (res.ok) {
                               res.json().then(json => {
-                                //console.log(json);
+                                console.log(json);
                                 if(json[0].today_hour.length > 0){
                                   $("#today_hrs").html(pad(json[0].today_hour[0].hour));
                                 }if(json[0].today_minute.length > 0){
@@ -639,7 +640,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
                   form.append('org_id',decrypt(row.orgid.toString(),"p45iw2hecw"));
                   form.append('pro_id',decrypt(row.proid.toString(),"p45iw2hecw"));
                   form.append('file1', Fs.createReadStream('C:\\Users\\'+ScreenCaptures[0]+'\\Documents\\ActiveScreens\\'+ScreenCaptures[1]));
-                  form.submit('https://deeptime-digital.com/api/upload/data/user-from/desktop', function(err, res) {
+                  form.submit('https://admin.deeptime-digital.com/api/upload/data/user-from/desktop', function(err, res) {
                   
                   if(res.statusCode == 200){
                   //console.log('success');
@@ -733,7 +734,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
                         };
 
 
-                        fetch('https://deeptime-digital.com/api/user/keyboard/activits/send',getUserDataOptions)
+                        fetch('https://admin.deeptime-digital.com/api/user/keyboard/activits/send',getUserDataOptions)
                           .then(res => {
                           if (res.ok) {
                           res.json().then(json => {
@@ -810,7 +811,7 @@ if (Fs.existsSync('C:/Users/Public/logininfo.csv')) {
                     };
 
                               
-                    fetch('https://deeptime-digital.com/api/user/mouse/activits/send',getUserDataOptions)
+                    fetch('https://admin.deeptime-digital.com/api/user/mouse/activits/send',getUserDataOptions)
                     .then(res => {
                     if (res.ok) {
                     res.json().then(json => {
@@ -985,7 +986,7 @@ checkInternetConnected(config);
                           };
 
 
-                          fetch('https://deeptime-digital.com/api/user/time/spent/send',getUserDataOptions)
+                          fetch('https://admin.deeptime-digital.com/api/user/time/spent/send',getUserDataOptions)
                             .then(res => {
                             if (res.ok) {
                             res.json().then(json => {
